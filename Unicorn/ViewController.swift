@@ -8,11 +8,34 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource  {
 
+    @IBOutlet var tableView: UITableView!
+    var items: [String] = ["We", "Heart", "Swift", "Swift", "Swift", "Swift", "Swift", "Swift", "Swift", "Swift"]
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.items.count;
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        var cell:UITableViewCell = self.tableView.dequeueReusableCellWithIdentifier("cell") as UITableViewCell
+        
+        cell.textLabel?.text = self.items[indexPath.row]
+        cell.accessoryType = UITableViewCellAccessoryType.None
+        cell.accessoryView = UISwitch(frame:CGRectMake(0, 0, 0, 0));
+        
+        
+        return cell
+    }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        println("You selected cell #\(indexPath.row)!")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
     }
 
     override func didReceiveMemoryWarning() {
