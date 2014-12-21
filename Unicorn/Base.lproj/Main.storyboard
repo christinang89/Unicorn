@@ -20,23 +20,45 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="0.0" y="308" width="379" height="492"/>
+                                    <rect key="frame" x="0.0" y="308" width="379" height="484"/>
                                 </variation>
                                 <connections>
                                     <outlet property="dataSource" destination="vXZ-lx-hvc" id="KxW-Zd-ygF"/>
                                     <outlet property="delegate" destination="vXZ-lx-hvc" id="0Vx-93-Szt"/>
                                 </connections>
                             </tableView>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2nb-aA-G7b">
+                                <rect key="frame" x="-25" y="-15" width="51" height="31"/>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="191" y="75" width="51" height="31"/>
+                                </variation>
+                                <connections>
+                                    <action selector="a:" destination="vXZ-lx-hvc" eventType="valueChanged" id="38j-BB-nSK"/>
+                                </connections>
+                            </switch>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LNh-6n-922">
+                                <rect key="frame" x="-25" y="-15" width="51" height="31"/>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="191" y="133" width="51" height="31"/>
+                                </variation>
+                                <connections>
+                                    <action selector="b:" destination="vXZ-lx-hvc" eventType="valueChanged" id="7k5-cy-DwT"/>
+                                </connections>
+                            </switch>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <variation key="default">
                             <mask key="subviews">
                                 <exclude reference="ryX-ri-b80"/>
+                                <exclude reference="2nb-aA-G7b"/>
+                                <exclude reference="LNh-6n-922"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
                             <mask key="subviews">
                                 <include reference="ryX-ri-b80"/>
+                                <include reference="2nb-aA-G7b"/>
+                                <include reference="LNh-6n-922"/>
                             </mask>
                         </variation>
                     </view>
