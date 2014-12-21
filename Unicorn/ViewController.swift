@@ -14,10 +14,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     var lightsName = [String:String]()
     var lightsState = [String:String]()
-    var lightsNameArray : [String] = []
-    var lightsOffNameArray : [String] = []
-    var lightsOnNameArray : [String] = []
-    var items: [String] = ["We", "Heart", "Swift", "Swift", "Swift", "Swift", "Swift", "Swift", "Swift", "Swift"]
+    var jsonResult : [NSDictionary] = []
+    var lightToggles = [String:UISwitch]()
     
     func checkLights() {
         // create the request & response
@@ -30,29 +28,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         // send the request
         var dataVal: NSData = NSURLConnection.sendSynchronousRequest(request, returningResponse: &response, error: &error)!
-        let jsonResult: NSDictionary! = NSJSONSerialization.JSONObjectWithData(dataVal, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
+        let jsonResponse: NSDictionary! = NSJSONSerialization.JSONObjectWithData(dataVal, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
         
         // look at the response
-        if (jsonResult != nil) {
-            // process jsonResult
-            for (id, result) in jsonResult {
-                var lightId = result["id"] as? String ?? ""
-                var lightName = result["name"] as? String ?? ""
-                var lightState = result["state"] as? String ?? ""
-                self.lightsName.updateValue(lightName, forKey:lightId)
-                self.lightsState.updateValue(lightState, forKey:lightId)
+        if (jsonResponse != nil) {
+            for (id, result) in jsonResponse {
+                jsonResult.append(result as NSDictionary)
             }
-            for (key, value) in lightsState {
-                if value == "0" {
-                    lightsOffNameArray.append(lightsName[key]!)
-                } else {
-                    lightsOnNameArray.append(lightsName[key]!)
-                }
-            }
-            lightsOffNameArray.sort{$0 < $1}
-            lightsOnNameArray.sort{$0 < $1}
-            lightsNameArray = lightsOnNameArray + lightsOffNameArray
-
         }
         else {
             println("No HTTP response")
@@ -62,7 +44,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
 
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.lightsName.count;
+        return self.jsonResult.count;
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -73,13 +55,19 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         request.URL = NSURL(string: url)
         request.HTTPMethod = "GET"
         
-        var s = UISwitch(frame:CGRectMake(0, 0, 0, 0))
-        cell.textLabel?.text = self.lightsNameArray[indexPath.row] as NSString;
+        cell.textLabel?.text = self.jsonResult[indexPath.row]["name"]! as NSString;
         
-        //cell.textLabel?.text = self.lightsName[indexPath.row]
+        var s = UISwitch(frame:CGRectMake(0, 0, 0, 0))
+        if self.jsonResult[indexPath.row]["state"]! as NSString == "1" {
+            s.setOn(true, animated: false)
+        } else {
+            s.setOn(false, animated: false)
+        }
+        
+        lightToggles.updateValue(s, forKey: self.jsonResult[indexPath.row]["id"]! as NSString)
+        
         cell.accessoryType = UITableViewCellAccessoryType.None
         cell.accessoryView = s
-        s.setOn(true, animated: false)
         
         return cell
     }
