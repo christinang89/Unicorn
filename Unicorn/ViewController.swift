@@ -16,6 +16,64 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var lightsState = [String:String]()
     var jsonResult : [NSDictionary] = []
     var lightToggles = [String:UISwitch]()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view, typically from a nib.
+        self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        checkLights()
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    // drawing of the uitableview
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.jsonResult.count;
+    }
+    
+    // populating data in uitableview
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        var cell:UITableViewCell = self.tableView.dequeueReusableCellWithIdentifier("cell") as UITableViewCell
+        
+        var url : String = "http://home.isidorechan.com/lights"
+        var request : NSMutableURLRequest = NSMutableURLRequest()
+        request.URL = NSURL(string: url)
+        request.HTTPMethod = "GET"
+        
+        cell.textLabel?.text = self.jsonResult[indexPath.row]["name"]! as NSString;
+        
+        var s = UISwitch(frame:CGRectMake(0, 0, 0, 0))
+        var lightId = self.jsonResult[indexPath.row]["id"] as String
+        s.tag = lightId.toInt()!
+        s.addTarget(self, action: "switchValueDidChange:", forControlEvents: .ValueChanged);
+        
+        if self.jsonResult[indexPath.row]["state"]! as NSString == "1" {
+            s.setOn(true, animated: false)
+        } else {
+            s.setOn(false, animated: false)
+        }
+        
+        lightToggles.updateValue(s, forKey: self.jsonResult[indexPath.row]["id"]! as NSString)
+        
+        cell.accessoryType = UITableViewCellAccessoryType.None
+        cell.accessoryView = s
+        
+        return cell
+    }
+
+    
+    // helper functions
+    
+    // synchronous call to load initial light state
     
     func checkLights() {
         // create the request & response
@@ -40,89 +98,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             println("No HTTP response")
             println(error)
         }
-
-    }
-
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.jsonResult.count;
-    }
-    
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell:UITableViewCell = self.tableView.dequeueReusableCellWithIdentifier("cell") as UITableViewCell
         
-        var url : String = "http://home.isidorechan.com/lights"
-        var request : NSMutableURLRequest = NSMutableURLRequest()
-        request.URL = NSURL(string: url)
-        request.HTTPMethod = "GET"
-        
-        cell.textLabel?.text = self.jsonResult[indexPath.row]["name"]! as NSString;
-        
-        var s = UISwitch(frame:CGRectMake(0, 0, 0, 0))
-        if self.jsonResult[indexPath.row]["state"]! as NSString == "1" {
-            s.setOn(true, animated: false)
-        } else {
-            s.setOn(false, animated: false)
-        }
-        
-        lightToggles.updateValue(s, forKey: self.jsonResult[indexPath.row]["id"]! as NSString)
-        
-        cell.accessoryType = UITableViewCellAccessoryType.None
-        cell.accessoryView = s
-        
-        return cell
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        checkLights()
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    @IBAction func a(sender: UISwitch) {
-        var s : String
-        if (sender.on) {
-            s = "1"
-        } else {
-            s = "0"
-        }
-        println(sender.on)
-        setLights("11", state: s)
-    }
-    
-    
-    @IBAction func b(sender: UISwitch) {
-        var s : String
-        if (sender.on) {
-            s = "1"
-        } else {
-            s = "0"
-        }
-        println(sender.on)
-        setLights("36", state: s)
-    }
-    
-    @IBAction func toggle(sender: UISwitch) {
-       var s : String
-        if (sender.on) {
-            s = "1"
-        } else {
-            s = "0"
-        }
-        println(sender.on)
-        setLights("11", state: s)
-    }
-    
-    
+    // synchronous call to switch light state
     
     func setLights(lightId : String, state : String) {
         // create the request & response
@@ -149,6 +128,22 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             println("No HTTP response")
             println(error)
         }
+    }
+    
+    // turn lights on/off based on switch action
+    
+    func switchValueDidChange(sender:UISwitch!) {
+        var newState : String
+        
+        if (sender.on == true){
+            newState = "1"
+        }
+        else{
+            newState = "0"
+        }
+        
+        var tag : String = String(sender.tag)
+        setLights(tag, state: newState)
     }
 
     
