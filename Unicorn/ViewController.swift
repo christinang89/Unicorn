@@ -12,6 +12,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     @IBOutlet var tableView: UITableView!
     
+    @IBOutlet weak var nestTemp: UILabel!
+    
+    @IBOutlet weak var lightLabel: UILabel!
+    
     var jsonResult : [NSDictionary] = []
     var lightToggles = [String:UISwitch]()
     
@@ -27,6 +31,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         view.addSubview(rangeSlider)
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
         rangeSlider.addTarget(self, action: "rangeSliderValueChanged:", forControlEvents: .ValueChanged)
+        checkNests()
+        
 //        let time = dispatch_time(DISPATCH_TIME_NOW, Int64(NSEC_PER_SEC))
 //        dispatch_after(time, dispatch_get_main_queue()) {
 //            self.rangeSlider.trackHighlightTintColor = UIColor.redColor()
@@ -37,15 +43,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     override func viewDidLayoutSubviews() {
-        let margin: CGFloat = 20.0
+        let margin: CGFloat = 60.0
         let width = view.bounds.width - 2.0 * margin
-        rangeSlider.frame = CGRect(x: margin, y: margin + topLayoutGuide.length,
-            width: width, height: 31.0)
+        rangeSlider.frame = CGRect(x: margin, y: 100.0,
+            width: width, height: 30.0)
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         checkLights()
+        checkNests()
     }
 
     override func didReceiveMemoryWarning() {
@@ -169,7 +176,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         if (jsonResponse != nil) {
             for (id, result) in jsonResponse {
                 nestJsonResult.append(result as NSDictionary)
+                var currentTemp : String = result["currentTemp"] as String
+                var maxTemp : String = result["maxTemp"] as String
+                var minTemp : String = result["minTemp"] as String
+                nestTemp.text = "\(currentTemp) (\(minTemp) - \(maxTemp))"
             }
+            
+            
         }
         else {
             println("No HTTP response")

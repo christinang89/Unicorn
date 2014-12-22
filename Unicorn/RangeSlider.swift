@@ -83,7 +83,7 @@ class RangeSlider: UIControl {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+
         trackLayer.rangeSlider = self
         trackLayer.contentsScale = UIScreen.mainScreen().scale
         layer.addSublayer(trackLayer)
@@ -95,6 +95,32 @@ class RangeSlider: UIControl {
         upperThumbLayer.rangeSlider = self
         upperThumbLayer.contentsScale = UIScreen.mainScreen().scale
         layer.addSublayer(upperThumbLayer)
+        
+        // initialise position of sliders
+        checkNests()
+        var minTemp : NSString = self.nestJsonResult[0]["minTemp"] as NSString
+        var minimumTemp : Double = minTemp.doubleValue
+        var maxTemp : NSString = self.nestJsonResult[0]["maxTemp"] as NSString
+        var maximumTemp : Double = maxTemp.doubleValue
+        
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        trackLayer.frame = bounds.rectByInsetting(dx: 0.0, dy: bounds.height / 3)
+        trackLayer.setNeedsDisplay()
+        
+        let lowerThumbCenter = CGFloat(positionForValue(minimumTemp))
+        
+        lowerThumbLayer.frame = CGRect(x: lowerThumbCenter - thumbWidth / 2.0, y: 0.0,
+            width: thumbWidth, height: thumbWidth)
+        lowerThumbLayer.setNeedsDisplay()
+        
+        let upperThumbCenter = CGFloat(positionForValue(maximumTemp))
+        upperThumbLayer.frame = CGRect(x: upperThumbCenter - thumbWidth / 2.0, y: 0.0,
+            width: thumbWidth, height: thumbWidth)
+        upperThumbLayer.setNeedsDisplay()
+        
+        CATransaction.commit()
+        
     }
     
     required init(coder: NSCoder) {
@@ -181,6 +207,37 @@ class RangeSlider: UIControl {
         upperThumbLayer.highlighted = false
         
     }
+    
+    var nestJsonResult : [NSDictionary] = []
+
+    // synchronous call to load initial nest state
+    
+    func checkNests() {
+        // create the request & response
+        var url : String = "http://home.isidorechan.com/nests"
+        var request : NSMutableURLRequest = NSMutableURLRequest()
+        var response: NSURLResponse?
+        var error: NSError?
+        request.URL = NSURL(string: url)
+        request.HTTPMethod = "GET"
+        
+        // send the request
+        var dataVal: NSData = NSURLConnection.sendSynchronousRequest(request, returningResponse: &response, error: &error)!
+        let jsonResponse: NSDictionary! = NSJSONSerialization.JSONObjectWithData(dataVal, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
+        
+        // look at the response
+        if (jsonResponse != nil) {
+            for (id, result) in jsonResponse {
+                nestJsonResult.append(result as NSDictionary)
+            }
+        }
+        else {
+            println("No HTTP response")
+            println(error)
+        }
+        
+    }
+
 
 
 }
