@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -16,15 +17,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Lights" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fjb-5w-ZCW">
-                                <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="0.0" y="160" width="47" height="21"/>
-                                </variation>
-                            </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="40" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="ryX-ri-b80">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -38,8 +30,7 @@
                                         <exclude reference="xY2-iw-ab0"/>
                                     </mask>
                                 </variation>
-                                <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
-                                    <rect key="frame" x="0.0" y="306" width="384" height="474"/>
+                                <variation key="heightClass=regular-widthClass=compact">
                                     <mask key="constraints">
                                         <include reference="cDd-Ae-OTk"/>
                                         <include reference="xY2-iw-ab0"/>
@@ -50,28 +41,40 @@
                                     <outlet property="delegate" destination="vXZ-lx-hvc" id="0Vx-93-Szt"/>
                                 </connections>
                             </tableView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Lights" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fjb-5w-ZCW">
+                                <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-BoldItalic" family="Helvetica Neue" pointSize="18"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="Fjb-5w-ZCW" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="DB8-82-dT9"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="ryX-ri-b80" secondAttribute="bottom" constant="10" id="K61-93-wyL"/>
+                            <constraint firstItem="ryX-ri-b80" firstAttribute="top" secondItem="Fjb-5w-ZCW" secondAttribute="bottom" constant="5" id="VL4-I6-MH8"/>
                             <constraint firstAttribute="centerX" secondItem="ryX-ri-b80" secondAttribute="centerX" constant="8" id="uGt-7y-3AJ"/>
                         </constraints>
                         <variation key="default">
                             <mask key="subviews">
-                                <exclude reference="Fjb-5w-ZCW"/>
                                 <exclude reference="ryX-ri-b80"/>
+                                <exclude reference="Fjb-5w-ZCW"/>
                             </mask>
                             <mask key="constraints">
+                                <exclude reference="DB8-82-dT9"/>
+                                <exclude reference="VL4-I6-MH8"/>
                                 <exclude reference="uGt-7y-3AJ"/>
                                 <exclude reference="K61-93-wyL"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
                             <mask key="subviews">
-                                <include reference="Fjb-5w-ZCW"/>
                                 <include reference="ryX-ri-b80"/>
+                                <include reference="Fjb-5w-ZCW"/>
                             </mask>
                             <mask key="constraints">
+                                <include reference="DB8-82-dT9"/>
+                                <include reference="VL4-I6-MH8"/>
                                 <include reference="uGt-7y-3AJ"/>
                                 <include reference="K61-93-wyL"/>
                             </mask>

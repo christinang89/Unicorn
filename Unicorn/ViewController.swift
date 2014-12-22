@@ -14,11 +14,27 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     var jsonResult : [NSDictionary] = []
     var lightToggles = [String:UISwitch]()
+    
+    let rangeSlider = RangeSlider(frame: CGRectZero)
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        view.addSubview(rangeSlider)
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        rangeSlider.addTarget(self, action: "rangeSliderValueChanged:", forControlEvents: .ValueChanged)
+        let time = dispatch_time(DISPATCH_TIME_NOW, Int64(NSEC_PER_SEC))
+        dispatch_after(time, dispatch_get_main_queue()) {
+            self.rangeSlider.trackHighlightTintColor = UIColor.redColor()
+            self.rangeSlider.curvaceousness = 0.0
+        }
+    }
+    
+    override func viewDidLayoutSubviews() {
+        let margin: CGFloat = 20.0
+        let width = view.bounds.width - 2.0 * margin
+        rangeSlider.frame = CGRect(x: margin, y: margin + topLayoutGuide.length,
+            width: width, height: 31.0)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -144,6 +160,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         setLights(tag, state: newState)
     }
 
+    // logs range slider values to console 
+    
+    func rangeSliderValueChanged(rangeSlider: RangeSlider) {
+        println("Range slider value changed: (\(rangeSlider.lowerValue) \(rangeSlider.upperValue))")
+    }
     
     
 

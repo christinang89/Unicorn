@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF6394C61A4804CE008C53A1 /* RangeSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6394C51A4804CE008C53A1 /* RangeSlider.swift */; };
+		CF6394C81A4805FC008C53A1 /* RangeSliderThumbLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6394C71A4805FC008C53A1 /* RangeSliderThumbLayer.swift */; };
+		CF6394CA1A480792008C53A1 /* RangeSliderTrackLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6394C91A480792008C53A1 /* RangeSliderTrackLayer.swift */; };
 		CFC6DB021A4670180037B379 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC6DB011A4670180037B379 /* AppDelegate.swift */; };
 		CFC6DB041A4670180037B379 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC6DB031A4670180037B379 /* ViewController.swift */; };
 		CFC6DB071A4670180037B379 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CFC6DB051A4670180037B379 /* Main.storyboard */; };
@@ -26,6 +29,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CF6394C51A4804CE008C53A1 /* RangeSlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RangeSlider.swift; sourceTree = "<group>"; };
+		CF6394C71A4805FC008C53A1 /* RangeSliderThumbLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RangeSliderThumbLayer.swift; sourceTree = "<group>"; };
+		CF6394C91A480792008C53A1 /* RangeSliderTrackLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RangeSliderTrackLayer.swift; sourceTree = "<group>"; };
 		CFC6DAFC1A4670180037B379 /* Unicorn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Unicorn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFC6DB001A4670180037B379 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CFC6DB011A4670180037B379 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -83,6 +89,9 @@
 				CFC6DB081A4670180037B379 /* Images.xcassets */,
 				CFC6DB0A1A4670180037B379 /* LaunchScreen.xib */,
 				CFC6DAFF1A4670180037B379 /* Supporting Files */,
+				CF6394C51A4804CE008C53A1 /* RangeSlider.swift */,
+				CF6394C71A4805FC008C53A1 /* RangeSliderThumbLayer.swift */,
+				CF6394C91A480792008C53A1 /* RangeSliderTrackLayer.swift */,
 			);
 			path = Unicorn;
 			sourceTree = "<group>";
@@ -213,7 +222,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFC6DB041A4670180037B379 /* ViewController.swift in Sources */,
+				CF6394CA1A480792008C53A1 /* RangeSliderTrackLayer.swift in Sources */,
+				CF6394C61A4804CE008C53A1 /* RangeSlider.swift in Sources */,
 				CFC6DB021A4670180037B379 /* AppDelegate.swift in Sources */,
+				CF6394C81A4805FC008C53A1 /* RangeSliderThumbLayer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -405,6 +417,7 @@
 				CFC6DB1D1A4670180037B379 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		CFC6DB1E1A4670180037B379 /* Build configuration list for PBXNativeTarget "UnicornTests" */ = {
 			isa = XCConfigurationList;
@@ -413,6 +426,7 @@
 				CFC6DB201A4670180037B379 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
