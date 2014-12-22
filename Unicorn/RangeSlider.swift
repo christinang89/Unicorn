@@ -19,25 +19,25 @@ class RangeSlider: UIControl {
     }
     */
     
-    var minimumValue: Double = 0.0 {
+    var minimumValue: Double = 68.0 {
         didSet {
             updateLayerFrames()
         }
     }
     
-    var maximumValue: Double = 1.0 {
+    var maximumValue: Double = 80.0 {
         didSet {
             updateLayerFrames()
         }
     }
     
-    var lowerValue: Double = 0.2 {
+    var lowerValue: Double = 72.0 {
         didSet {
             updateLayerFrames()
         }
     }
     
-    var upperValue: Double = 0.8 {
+    var upperValue: Double = 78.0 {
         didSet {
             updateLayerFrames()
         }
@@ -55,7 +55,7 @@ class RangeSlider: UIControl {
         }
     }
     
-    var trackHighlightTintColor: UIColor = UIColor(red: 0.0, green: 0.45, blue: 0.94, alpha: 1.0) {
+    var trackHighlightTintColor: UIColor = UIColor(red: 0.0, green: 0.94, blue: 0.45, alpha: 1.0) {
         didSet {
             trackLayer.setNeedsDisplay()
         }
@@ -169,15 +169,17 @@ class RangeSlider: UIControl {
             upperValue += deltaValue
             upperValue = boundValue(upperValue, toLowerValue: lowerValue, upperValue: maximumValue)
         }
-        
-        sendActionsForControlEvents(.ValueChanged)
-        
+
         return true
     }
     
     override func endTrackingWithTouch(touch: UITouch, withEvent event: UIEvent) {
+        
+        sendActionsForControlEvents(.ValueChanged)
+        
         lowerThumbLayer.highlighted = false
         upperThumbLayer.highlighted = false
+        
     }
 
 

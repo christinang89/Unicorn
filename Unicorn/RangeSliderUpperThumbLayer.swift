@@ -1,15 +1,15 @@
 //
-//  RangeSliderThumbLayer.swift
+//  RangeSliderUpperThumbLayer.swift
 //  Unicorn
 //
-//  Created by Christina Ng on 12/21/14.
+//  Created by Christina Ng on 12/22/14.
 //  Copyright (c) 2014 Christina Ng. All rights reserved.
 //
 
 import UIKit
 import QuartzCore
 
-class RangeSliderThumbLayer: CALayer {
+class RangeSliderUpperThumbLayer: CALayer {
     
     weak var rangeSlider: RangeSlider?
     

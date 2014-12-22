@@ -15,6 +15,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var jsonResult : [NSDictionary] = []
     var lightToggles = [String:UISwitch]()
     
+    var nestJsonResult : [NSDictionary] = []
+    
+    var password : String = "un1cornH0rn"
+    
     let rangeSlider = RangeSlider(frame: CGRectZero)
 
     override func viewDidLoad() {
@@ -23,11 +27,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         view.addSubview(rangeSlider)
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
         rangeSlider.addTarget(self, action: "rangeSliderValueChanged:", forControlEvents: .ValueChanged)
-        let time = dispatch_time(DISPATCH_TIME_NOW, Int64(NSEC_PER_SEC))
-        dispatch_after(time, dispatch_get_main_queue()) {
-            self.rangeSlider.trackHighlightTintColor = UIColor.redColor()
-            self.rangeSlider.curvaceousness = 0.0
-        }
+//        let time = dispatch_time(DISPATCH_TIME_NOW, Int64(NSEC_PER_SEC))
+//        dispatch_after(time, dispatch_get_main_queue()) {
+//            self.rangeSlider.trackHighlightTintColor = UIColor.redColor()
+//            self.rangeSlider.curvaceousness = 0.0
+//        }
+        
+        
     }
     
     override func viewDidLayoutSubviews() {
@@ -144,6 +150,69 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
     }
     
+    // synchronous call to load initial nest state
+    
+    func checkNests() {
+        // create the request & response
+        var url : String = "http://home.isidorechan.com/nests"
+        var request : NSMutableURLRequest = NSMutableURLRequest()
+        var response: NSURLResponse?
+        var error: NSError?
+        request.URL = NSURL(string: url)
+        request.HTTPMethod = "GET"
+        
+        // send the request
+        var dataVal: NSData = NSURLConnection.sendSynchronousRequest(request, returningResponse: &response, error: &error)!
+        let jsonResponse: NSDictionary! = NSJSONSerialization.JSONObjectWithData(dataVal, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
+        
+        // look at the response
+        if (jsonResponse != nil) {
+            for (id, result) in jsonResponse {
+                nestJsonResult.append(result as NSDictionary)
+            }
+        }
+        else {
+            println("No HTTP response")
+            println(error)
+        }
+        
+    }
+    
+    // async call to switch nest temps
+    
+    func setNests(nestId : String, minTemp : String, maxTemp : String) {
+        // create the request & response
+        var url : String = "http://home.isidorechan.com/nests/" + nestId
+        var request : NSMutableURLRequest = NSMutableURLRequest()
+        var response: NSURLResponse?
+        var error: NSError?
+        
+        // create some JSON data and configure the request
+        let jsonString = "{\"password\":\"" + password + "\", \"minTemp\":\"" + minTemp + "\", \"maxTemp\":\"" + maxTemp + "\"}"
+        request.URL = NSURL(string: url)
+        request.HTTPBody = jsonString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
+        request.HTTPMethod = "PUT"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // send the request
+        NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue(), completionHandler:{ (response:NSURLResponse!, data: NSData!, error: NSError!) -> Void in
+            var error: AutoreleasingUnsafeMutablePointer<NSError?> = nil
+            let jsonResult: NSDictionary! = NSJSONSerialization.JSONObjectWithData(data, options:NSJSONReadingOptions.MutableContainers, error: error) as? NSDictionary
+            
+            if (jsonResult != nil) {
+                // process jsonResult
+                println(jsonResult)
+            } else {
+                // couldn't load JSON, look at error
+                println(error)
+            }
+            
+            
+        })
+    
+    }
+
+    
     // turn lights on/off based on switch action
     
     func switchValueDidChange(sender:UISwitch!) {
@@ -160,10 +229,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         setLights(tag, state: newState)
     }
 
-    // logs range slider values to console 
+    // set temp based on slider values
     
     func rangeSliderValueChanged(rangeSlider: RangeSlider) {
-        println("Range slider value changed: (\(rangeSlider.lowerValue) \(rangeSlider.upperValue))")
+        var minimumTemp : Int = Int(rangeSlider.lowerValue)
+        var maximumTemp : Int = Int(rangeSlider.upperValue)
+        setNests("32", minTemp: String(minimumTemp) , maxTemp: String(maximumTemp))
+        println("Range slider value changed: (\(minimumTemp) \(maximumTemp))")
     }
     
     
