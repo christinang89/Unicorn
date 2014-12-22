@@ -12,8 +12,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     @IBOutlet var tableView: UITableView!
     
-    var lightsName = [String:String]()
-    var lightsState = [String:String]()
     var jsonResult : [NSDictionary] = []
     var lightToggles = [String:UISwitch]()
 
