@@ -11,16 +11,14 @@ import UIKit
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource  {
     
     @IBOutlet var tableView: UITableView!
+    @IBOutlet weak var lightLabel: UILabel!
     
     @IBOutlet weak var nestTemp: UILabel!
     @IBOutlet weak var currentTempLabel: UILabel!
-    @IBOutlet weak var lightLabel: UILabel!
-    
     @IBOutlet weak var lockStateLabel: UIButton!
     
-    var jsonResult : [NSDictionary] = []
+    var jsonResult : [NSDictionary] = [] // lights json result
     var lightToggles = [String:UISwitch]()
-    
     var nestJsonResult : [NSDictionary] = []
     var lockJsonResult : [NSDictionary] = []
     
@@ -35,26 +33,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
         rangeSlider.addTarget(self, action: "rangeSliderValueChanged:", forControlEvents: .ValueChanged)
         
+        let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+        dispatch_async(backgroundQueue, {
+            for( var i: Int = 0; i < 100; i++ )
+            {
+                NSThread.sleepForTimeInterval(1)
+                self.pollLights()
+                self.pollLocks()
+                self.pollNests()
+            }
             
-         let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-         let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                dispatch_async(backgroundQueue, {
-                    for( var i: Int = 0; i < 100; i++ )
-                    {
-                        println("This is run on the background queue")
-                        NSThread.sleepForTimeInterval(1)
-                        self.pollLights()
-                        self.tableView.reloadData()
-                    }
-        
-                })
-        
-//                let time = dispatch_time(DISPATCH_TIME_NOW, Int64(NSEC_PER_SEC))
-//                dispatch_after(time, dispatch_get_main_queue()) {
-//                    self.rangeSlider.trackHighlightTintColor = UIColor.redColor()
-//                    self.rangeSlider.curvaceousness = 0.0
-//                }
-        
+        })
         
     }
     
@@ -106,7 +96,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     
-    // helper functions
+    ///////////// loading functions /////////////
     
     // synchronous call to load initial light state
     
@@ -149,79 +139,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             println(error)
         }
         
-    }
-    
-    func pollLights() {
-        // create the request & response
-        var url : String = "http://home.isidorechan.com/lights"
-        var request : NSMutableURLRequest = NSMutableURLRequest()
-        var response: NSURLResponse?
-        var error: NSError?
-        request.URL = NSURL(string: url)
-        request.HTTPMethod = "GET"
-        
-        // send the request
-        var dataVal: NSData = NSURLConnection.sendSynchronousRequest(request, returningResponse: &response, error: &error)!
-        let jsonResponse: NSDictionary! = NSJSONSerialization.JSONObjectWithData(dataVal, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
-        
-        // look at the response
-        if (jsonResponse != nil) {
-            for (id, result) in jsonResponse {
-                var state : String = result["state"] as String
-                var lightState : Bool
-                if (state == "1") {
-                    lightState = true
-                } else {
-                    lightState = false
-                }
-                var lightId : String = result["id"] as String
-                var tempSwitch : UISwitch = lightToggles[lightId]! as UISwitch
-                if (tempSwitch.on != lightState) {
-                    dispatch_async(dispatch_get_main_queue()) {
-                        tempSwitch.setOn(lightState, animated: true)
-                    }
-                    // tempSwitch.setOn(lightState, animated: true)
-                    // checkLights()
-                    //self.tableView.reloadData()
-                    //println("changed to \(lightState)")
-                }
-            }
-        }
-        else {
-            println("No HTTP response")
-            println(error)
-        }
-        
-    }
-    
-    
-    // synchronous call to switch light state
-    
-    func setLights(lightId : String, state : String) {
-        // create the request & response
-        var url : String = "http://home.isidorechan.com/lights/" + lightId
-        var request : NSMutableURLRequest = NSMutableURLRequest()
-        var response: NSURLResponse?
-        var error: NSError?
-        
-        // create some JSON data and configure the request
-        let jsonString = "{\"state\":\"" + state + "\"}"
-        request.URL = NSURL(string: url)
-        request.HTTPBody = jsonString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
-        request.HTTPMethod = "PUT"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        // send the request
-        NSURLConnection.sendSynchronousRequest(request, returningResponse: &response, error: &error)
-        
-        // look at the response
-        if let httpResponse = response as? NSHTTPURLResponse {
-            println("HTTP response: \(httpResponse.statusCode)")
-            println(response)
-        } else {
-            println("No HTTP response")
-            println(error)
-        }
     }
     
     // synchronous call to load initial nest state
@@ -297,6 +214,177 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
     }
     
+    ///////////// polling functions /////////////
+    
+    // synchronous call to poll light states
+    
+    func pollLights() {
+        // create the request & response
+        var url : String = "http://home.isidorechan.com/lights"
+        var request : NSMutableURLRequest = NSMutableURLRequest()
+        var response: NSURLResponse?
+        var error: NSError?
+        request.URL = NSURL(string: url)
+        request.HTTPMethod = "GET"
+        
+        // send the request
+        var dataVal: NSData = NSURLConnection.sendSynchronousRequest(request, returningResponse: &response, error: &error)!
+        let jsonResponse: NSDictionary! = NSJSONSerialization.JSONObjectWithData(dataVal, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
+        
+        // look at the response
+        if (jsonResponse != nil) {
+            for (id, result) in jsonResponse {
+                var state : String = result["state"] as String
+                var lightState : Bool
+                if (state == "1") {
+                    lightState = true
+                } else {
+                    lightState = false
+                }
+                var lightId : String = result["id"] as String
+                var tempSwitch : UISwitch = lightToggles[lightId]! as UISwitch
+                if (tempSwitch.on != lightState) {
+                    dispatch_async(dispatch_get_main_queue()) {
+                        tempSwitch.setOn(lightState, animated: true)
+                        println("light \(lightId) changed to \(lightState)")
+                    }
+                }
+            }
+        }
+        else {
+            println("No HTTP response")
+            println(error)
+        }
+        
+    }
+    
+    // synchronous call to poll lock state
+    
+    func pollLocks() {
+        // create the request & response
+        var url : String = "http://home.isidorechan.com/locks"
+        var request : NSMutableURLRequest = NSMutableURLRequest()
+        var response: NSURLResponse?
+        var error: NSError?
+        request.URL = NSURL(string: url)
+        request.HTTPMethod = "GET"
+        
+        // send the request
+        var dataVal: NSData = NSURLConnection.sendSynchronousRequest(request, returningResponse: &response, error: &error)!
+        let jsonResponse: NSDictionary! = NSJSONSerialization.JSONObjectWithData(dataVal, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
+        
+        // look at the response
+        if (jsonResponse != nil) {
+            for (id, result) in jsonResponse {
+                var state : String = result["state"] as String
+                if (state == "1") {
+                    if self.lockStateLabel.selected != true {
+                        dispatch_async(dispatch_get_main_queue()) {
+                            self.lockStateLabel.selected = true
+                            self.lockStateLabel.setTitle("Locked", forState: UIControlState.Selected)
+                            println("lock changed to locked")
+                        }
+                    }
+                } else {
+                    if self.lockStateLabel.selected == true {
+                        dispatch_async(dispatch_get_main_queue()) {
+                            self.lockStateLabel.selected = false
+                            self.lockStateLabel.setTitle("Unlocked", forState: UIControlState.Normal)
+                            println("lock changed to unlocked")
+                        }
+                    }
+                }
+                
+            }
+        }
+            
+        else {
+            println("No HTTP response")
+            println(error)
+        }
+        
+    }
+    
+    
+    func pollNests() {
+        // create the request & response
+        var url : String = "http://home.isidorechan.com/nests"
+        var request : NSMutableURLRequest = NSMutableURLRequest()
+        var response: NSURLResponse?
+        var error: NSError?
+        request.URL = NSURL(string: url)
+        request.HTTPMethod = "GET"
+        
+        // send the request
+        var dataVal: NSData = NSURLConnection.sendSynchronousRequest(request, returningResponse: &response, error: &error)!
+        let jsonResponse: NSDictionary! = NSJSONSerialization.JSONObjectWithData(dataVal, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
+        
+        // look at the response
+
+        if (jsonResponse != nil) {
+            for (id, result) in jsonResponse {
+                // nestJsonResult.append(result as NSDictionary)
+                var currentTemp : String = result["currentTemp"] as String
+                var maxTemp : String = result["maxTemp"] as String
+                var minTemp : String = result["minTemp"] as String
+                if (self.nestJsonResult[0]["currentTemp"] as String != currentTemp) {
+                    self.nestJsonResult[0].setValue(currentTemp, forKey: "currentTemp")
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self.currentTempLabel.text = currentTemp
+                        println("Nest current temp updated to \(currentTemp)")
+                    }
+                }
+                if (self.nestJsonResult[0]["minTemp"] as String != minTemp || self.nestJsonResult[0]["maxTemp"] as String != maxTemp) {
+                    self.nestJsonResult[0].setValue(minTemp, forKey: "minTemp")
+                    self.nestJsonResult[0].setValue(maxTemp, forKey: "maxTemp")
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self.nestTemp.text = "(\(minTemp) - \(maxTemp))"
+                        println("Nest temp updated to (\(minTemp) - \(maxTemp))")
+                    }
+                }
+            }
+            
+        }
+        else {
+            println("No HTTP response")
+            println(error)
+        }
+        
+    }
+    
+    
+    ///////////// switching functions /////////////
+    
+    // synchronous call to switch light state
+    
+    func setLights(lightId : String, state : String) {
+        // create the request & response
+        var url : String = "http://home.isidorechan.com/lights/" + lightId
+        var request : NSMutableURLRequest = NSMutableURLRequest()
+        var response: NSURLResponse?
+        var error: NSError?
+        
+        // create some JSON data and configure the request
+        let jsonString = "{\"state\":\"" + state + "\"}"
+        request.URL = NSURL(string: url)
+        request.HTTPBody = jsonString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
+        request.HTTPMethod = "PUT"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // send the request
+        NSURLConnection.sendSynchronousRequest(request, returningResponse: &response, error: &error)
+        
+        // look at the response
+        if let httpResponse = response as? NSHTTPURLResponse {
+            println("HTTP response: \(httpResponse.statusCode)")
+            println(response)
+        } else {
+            println("No HTTP response")
+            println(error)
+        }
+    }
+    
+    
     // async call to switch nest temps
     
     func setNests(nestId : String, minTemp : String, maxTemp : String) {
@@ -370,13 +458,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                             
                             self.lockStateLabel.selected = false
                             self.lockStateLabel.setTitle("Unlocked", forState: UIControlState.Normal)
-                            
                         }
                         
                     }
                 }
             } else {
-                
                 // couldn't load JSON, look at error
                 println(error)
             }
@@ -389,6 +475,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
     }
     
+    ///////////// trigger functions /////////////
     
     // turn lights on/off based on switch action
     
@@ -418,7 +505,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         println("Range slider value changed: (\(minimumTemp) \(maximumTemp))")
     }
     
-    
+    // set lock based on button action
     
     @IBAction func switchLockState(sender: UIButton) {
         var newState : String
