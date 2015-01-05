@@ -9,22 +9,25 @@
 import UIKit
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource  {
-
+    
     @IBOutlet var tableView: UITableView!
     
     @IBOutlet weak var nestTemp: UILabel!
-    
+    @IBOutlet weak var currentTempLabel: UILabel!
     @IBOutlet weak var lightLabel: UILabel!
+    
+    @IBOutlet weak var lockStateLabel: UIButton!
     
     var jsonResult : [NSDictionary] = []
     var lightToggles = [String:UISwitch]()
     
     var nestJsonResult : [NSDictionary] = []
+    var lockJsonResult : [NSDictionary] = []
     
     var password : String = "un1cornH0rn"
     
     let rangeSlider = RangeSlider(frame: CGRectZero)
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -33,11 +36,24 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         rangeSlider.addTarget(self, action: "rangeSliderValueChanged:", forControlEvents: .ValueChanged)
         checkNests()
         
-//        let time = dispatch_time(DISPATCH_TIME_NOW, Int64(NSEC_PER_SEC))
-//        dispatch_after(time, dispatch_get_main_queue()) {
-//            self.rangeSlider.trackHighlightTintColor = UIColor.redColor()
-//            self.rangeSlider.curvaceousness = 0.0
-//        }
+        let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+        //        dispatch_async(backgroundQueue, {
+        //            for( var i: Int = 0; i < 100; i++ )
+        //            {
+        //                println("This is run on the background queue")
+        //                NSThread.sleepForTimeInterval(1)
+        //                self.pollLights()
+        //                //self.tableView.reloadData()
+        //            }
+        //
+        //        })
+        
+        //        let time = dispatch_time(DISPATCH_TIME_NOW, Int64(NSEC_PER_SEC))
+        //        dispatch_after(time, dispatch_get_main_queue()) {
+        //            self.rangeSlider.trackHighlightTintColor = UIColor.redColor()
+        //            self.rangeSlider.curvaceousness = 0.0
+        //        }
         
         
     }
@@ -53,8 +69,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         super.viewWillAppear(animated)
         checkLights()
         checkNests()
+        checkLocks()
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -78,25 +95,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         cell.textLabel?.text = self.jsonResult[indexPath.row]["name"]! as NSString;
         
-        var s = UISwitch(frame:CGRectMake(0, 0, 0, 0))
-        var lightId = self.jsonResult[indexPath.row]["id"] as String
-        s.tag = lightId.toInt()!
-        s.addTarget(self, action: "switchValueDidChange:", forControlEvents: .ValueChanged);
+        var lightId : String = self.jsonResult[indexPath.row]["id"] as NSString
         
-        if self.jsonResult[indexPath.row]["state"]! as NSString == "1" {
-            s.setOn(true, animated: false)
-        } else {
-            s.setOn(false, animated: false)
-        }
-        
-        lightToggles.updateValue(s, forKey: self.jsonResult[indexPath.row]["id"]! as NSString)
+        var s = lightToggles[lightId]
         
         cell.accessoryType = UITableViewCellAccessoryType.None
         cell.accessoryView = s
         
         return cell
     }
-
+    
     
     // helper functions
     
@@ -114,11 +122,26 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // send the request
         var dataVal: NSData = NSURLConnection.sendSynchronousRequest(request, returningResponse: &response, error: &error)!
         let jsonResponse: NSDictionary! = NSJSONSerialization.JSONObjectWithData(dataVal, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
+        jsonResult.removeAll(keepCapacity: true)
         
         // look at the response
         if (jsonResponse != nil) {
             for (id, result) in jsonResponse {
                 jsonResult.append(result as NSDictionary)
+                
+                var s = UISwitch(frame:CGRectMake(0, 0, 0, 0))
+                var lightId = result["id"] as String
+                s.tag = lightId.toInt()!
+                s.addTarget(self, action: "switchValueDidChange:", forControlEvents: .ValueChanged);
+                
+                if result["state"]! as NSString == "1" {
+                    s.setOn(true, animated: false)
+                } else {
+                    s.setOn(false, animated: false)
+                }
+                
+                lightToggles.updateValue(s, forKey: result["id"]! as NSString)
+                
             }
         }
         else {
@@ -127,6 +150,48 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
         
     }
+    
+    func pollLights() {
+        // create the request & response
+        var url : String = "http://home.isidorechan.com/lights"
+        var request : NSMutableURLRequest = NSMutableURLRequest()
+        var response: NSURLResponse?
+        var error: NSError?
+        request.URL = NSURL(string: url)
+        request.HTTPMethod = "GET"
+        
+        // send the request
+        var dataVal: NSData = NSURLConnection.sendSynchronousRequest(request, returningResponse: &response, error: &error)!
+        let jsonResponse: NSDictionary! = NSJSONSerialization.JSONObjectWithData(dataVal, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
+        
+        // look at the response
+        if (jsonResponse != nil) {
+            for (id, result) in jsonResponse {
+                var state : String = result["state"] as String
+                var lightState : Bool
+                if (state == "1") {
+                    lightState = true
+                } else {
+                    lightState = false
+                }
+                var lightId : String = result["id"] as String
+                var tempSwitch : UISwitch = lightToggles[lightId]! as UISwitch
+                if (tempSwitch.on != lightState) {
+                    tempSwitch.setOn(lightState, animated: true)
+                    
+                    checkLights()
+                    self.tableView.reloadData()
+                    println("changed to \(lightState)")
+                }
+            }
+        }
+        else {
+            println("No HTTP response")
+            println(error)
+        }
+        
+    }
+    
     
     // synchronous call to switch light state
     
@@ -179,9 +244,48 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 var currentTemp : String = result["currentTemp"] as String
                 var maxTemp : String = result["maxTemp"] as String
                 var minTemp : String = result["minTemp"] as String
-                nestTemp.text = "\(currentTemp) (\(minTemp) - \(maxTemp))"
+                currentTempLabel.text = "\(currentTemp) "
+                nestTemp.text = "(\(minTemp) - \(maxTemp))"
             }
             
+            
+        }
+        else {
+            println("No HTTP response")
+            println(error)
+        }
+        
+    }
+    
+    
+    // synchronous call to load initial lock state
+    
+    func checkLocks() {
+        // create the request & response
+        var url : String = "http://home.isidorechan.com/locks"
+        var request : NSMutableURLRequest = NSMutableURLRequest()
+        var response: NSURLResponse?
+        var error: NSError?
+        request.URL = NSURL(string: url)
+        request.HTTPMethod = "GET"
+        
+        // send the request
+        var dataVal: NSData = NSURLConnection.sendSynchronousRequest(request, returningResponse: &response, error: &error)!
+        let jsonResponse: NSDictionary! = NSJSONSerialization.JSONObjectWithData(dataVal, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
+        
+        // look at the response
+        if (jsonResponse != nil) {
+            for (id, result) in jsonResponse {
+                lockJsonResult.append(result as NSDictionary)
+                
+                if result["state"]! as NSString == "1" {
+                    lockStateLabel.setTitle("Locked", forState: UIControlState.Selected)
+                    lockStateLabel.selected = true
+                } else {
+                    lockStateLabel.setTitle("Unlocked", forState: UIControlState.Normal)
+                    lockStateLabel.selected = false
+                }
+            }
             
         }
         else {
@@ -212,9 +316,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             var error: AutoreleasingUnsafeMutablePointer<NSError?> = nil
             let jsonResult: NSDictionary! = NSJSONSerialization.JSONObjectWithData(data, options:NSJSONReadingOptions.MutableContainers, error: error) as? NSDictionary
             
+            
             if (jsonResult != nil) {
                 // process jsonResult
                 println(jsonResult)
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.nestTemp.text = "(\(minTemp) - \(maxTemp))"
+                }
             } else {
                 // couldn't load JSON, look at error
                 println(error)
@@ -222,9 +330,63 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             
             
         })
-    
+        
     }
-
+    
+    // async call to switch lock state
+    
+    func setLocks(lockId : String, state : String) {
+        // create the request & response
+        var url : String = "http://home.isidorechan.com/locks/" + lockId
+        var request : NSMutableURLRequest = NSMutableURLRequest()
+        var response: NSURLResponse?
+        var error: NSError?
+        
+        // create some JSON data and configure the request
+        let jsonString = "{\"password\":\"" + password + "\", \"state\":\"" + state + "\"}"
+        request.URL = NSURL(string: url)
+        request.HTTPBody = jsonString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
+        request.HTTPMethod = "PUT"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // send the request
+        NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue(), completionHandler:{ (response:NSURLResponse!, data: NSData!, error: NSError!) -> Void in
+            var error: AutoreleasingUnsafeMutablePointer<NSError?> = nil
+            let jsonResult: NSDictionary! = NSJSONSerialization.JSONObjectWithData(data, options:NSJSONReadingOptions.MutableContainers, error: error) as? NSDictionary
+            
+            if (jsonResult != nil) {
+                // process jsonResult
+                println(jsonResult)
+                
+                if jsonResult["state"] != nil {
+                    dispatch_async(dispatch_get_main_queue()) {
+                        if jsonResult["state"] as NSString == "1" {
+                            self.lockStateLabel.selected = true
+                            self.lockStateLabel.setTitle("Locked", forState: UIControlState.Selected)
+                        }
+                        else {
+                            
+                            self.lockStateLabel.selected = false
+                            self.lockStateLabel.setTitle("Unlocked", forState: UIControlState.Normal)
+                            
+                        }
+                        
+                    }
+                }
+            } else {
+                
+                // couldn't load JSON, look at error
+                println(error)
+            }
+            dispatch_async(dispatch_get_main_queue()) {
+                self.lockStateLabel.enabled = true
+            }
+            
+            
+        })
+        
+    }
+    
     
     // turn lights on/off based on switch action
     
@@ -241,17 +403,35 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         var tag : String = String(sender.tag)
         setLights(tag, state: newState)
     }
-
+    
     // set temp based on slider values
     
     func rangeSliderValueChanged(rangeSlider: RangeSlider) {
         var minimumTemp : Int = Int(rangeSlider.lowerValue)
         var maximumTemp : Int = Int(rangeSlider.upperValue)
+        dispatch_async(dispatch_get_main_queue()) {
+            self.nestTemp.text = "(\(minimumTemp) - \(maximumTemp))"
+        }
         setNests("32", minTemp: String(minimumTemp) , maxTemp: String(maximumTemp))
         println("Range slider value changed: (\(minimumTemp) \(maximumTemp))")
     }
     
     
-
+    
+    @IBAction func switchLockState(sender: UIButton) {
+        var newState : String
+        if sender.selected {
+            newState = "0"
+        } else {
+            newState = "1"
+        }
+        sender.enabled = false
+        setLocks("34", state: String(newState))
+        println("New lock state: (\(newState))")
+    }
+    
+    
+    
+    
 }
 

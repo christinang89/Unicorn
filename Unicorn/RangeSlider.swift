@@ -31,13 +31,13 @@ class RangeSlider: UIControl {
         }
     }
     
-    var lowerValue: Double = 72.0 {
+    var lowerValue: Double = 68.0 {
         didSet {
             updateLayerFrames()
         }
     }
     
-    var upperValue: Double = 78.0 {
+    var upperValue: Double = 80.0 {
         didSet {
             updateLayerFrames()
         }
@@ -103,23 +103,8 @@ class RangeSlider: UIControl {
         var maxTemp : NSString = self.nestJsonResult[0]["maxTemp"] as NSString
         var maximumTemp : Double = maxTemp.doubleValue
         
-        CATransaction.begin()
-        CATransaction.setDisableActions(true)
-        trackLayer.frame = bounds.rectByInsetting(dx: 0.0, dy: bounds.height / 3)
-        trackLayer.setNeedsDisplay()
-        
-        let lowerThumbCenter = CGFloat(positionForValue(minimumTemp))
-        
-        lowerThumbLayer.frame = CGRect(x: lowerThumbCenter - thumbWidth / 2.0, y: 0.0,
-            width: thumbWidth, height: thumbWidth)
-        lowerThumbLayer.setNeedsDisplay()
-        
-        let upperThumbCenter = CGFloat(positionForValue(maximumTemp))
-        upperThumbLayer.frame = CGRect(x: upperThumbCenter - thumbWidth / 2.0, y: 0.0,
-            width: thumbWidth, height: thumbWidth)
-        upperThumbLayer.setNeedsDisplay()
-        
-        CATransaction.commit()
+        self.lowerValue = minimumTemp
+        self.upperValue = maximumTemp
         
     }
     
@@ -205,7 +190,6 @@ class RangeSlider: UIControl {
         
         lowerThumbLayer.highlighted = false
         upperThumbLayer.highlighted = false
-        
     }
     
     var nestJsonResult : [NSDictionary] = []

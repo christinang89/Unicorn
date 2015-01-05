@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -51,62 +52,53 @@
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="20"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
-                                <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
-                                    <rect key="frame" x="5" y="209" width="59" height="24"/>
-                                </variation>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Front Door" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oLm-qZ-0uH">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="20"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
-                                <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
-                                    <rect key="frame" x="5" y="30" width="103" height="30"/>
-                                </variation>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RdV-9E-sS6">
                                 <rect key="frame" x="-23" y="-15" width="46" height="30"/>
                                 <state key="normal" title="Locked">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
-                                    <rect key="frame" x="338" y="30" width="51" height="30"/>
-                                </variation>
+                                <connections>
+                                    <action selector="switchLockState:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="KpY-Ki-zP0"/>
+                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Air Conditioning" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KlG-88-jTs">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="20"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
-                                <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
-                                    <rect key="frame" x="5" y="66" width="154" height="30"/>
-                                </variation>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d5x-oy-Fjc">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="(73 - 80)" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d5x-oy-Fjc">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
-                                <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
-                                    <rect key="frame" x="301" y="63" width="88" height="30"/>
-                                </variation>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="68" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QhE-eA-6DQ">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
-                                <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
-                                    <rect key="frame" x="5" y="104" width="20" height="21"/>
-                                </variation>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="80" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jUC-Cc-tsn">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="75" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dJq-uI-Z5s">
+                                <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
-                                    <rect key="frame" x="369" y="104" width="20" height="21"/>
+                                    <rect key="frame" x="290" y="68" width="20" height="21"/>
                                 </variation>
                             </label>
                         </subviews>
@@ -115,7 +107,9 @@
                             <constraint firstItem="Fjb-5w-ZCW" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" constant="-11" id="0Uw-qZ-VfK">
                                 <variation key="heightClass=regular-widthClass=compact" constant="-5"/>
                             </constraint>
-                            <constraint firstItem="d5x-oy-Fjc" firstAttribute="centerY" secondItem="KlG-88-jTs" secondAttribute="centerY" constant="-1.5" id="KVM-8r-fvR"/>
+                            <constraint firstItem="d5x-oy-Fjc" firstAttribute="leading" secondItem="dJq-uI-Z5s" secondAttribute="trailing" id="AqC-Jt-KyW"/>
+                            <constraint firstItem="KlG-88-jTs" firstAttribute="centerY" secondItem="dJq-uI-Z5s" secondAttribute="centerY" constant="-2.5" id="JaC-8T-NyA"/>
+                            <constraint firstItem="d5x-oy-Fjc" firstAttribute="centerY" secondItem="KlG-88-jTs" secondAttribute="centerY" constant="1.5" id="MeS-ow-Ela"/>
                             <constraint firstItem="QhE-eA-6DQ" firstAttribute="top" secondItem="KlG-88-jTs" secondAttribute="bottom" constant="8" id="OPD-bM-f5N">
                                 <variation key="heightClass=regular-widthClass=compact" constant="17"/>
                             </constraint>
@@ -136,7 +130,7 @@
                             <constraint firstItem="QhE-eA-6DQ" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" constant="-11" id="nTc-tX-QPk">
                                 <variation key="heightClass=regular-widthClass=compact" constant="-5"/>
                             </constraint>
-                            <constraint firstAttribute="trailingMargin" secondItem="d5x-oy-Fjc" secondAttribute="trailing" constant="-5" id="z7N-ie-oL2"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="d5x-oy-Fjc" secondAttribute="trailing" constant="-5" id="xZT-fj-ew5"/>
                         </constraints>
                         <variation key="default">
                             <mask key="subviews">
@@ -148,18 +142,21 @@
                                 <exclude reference="d5x-oy-Fjc"/>
                                 <exclude reference="QhE-eA-6DQ"/>
                                 <exclude reference="jUC-Cc-tsn"/>
+                                <exclude reference="dJq-uI-Z5s"/>
                             </mask>
                             <mask key="constraints">
                                 <exclude reference="dMp-X7-epi"/>
                                 <exclude reference="maz-yj-oeO"/>
+                                <exclude reference="JaC-8T-NyA"/>
                                 <exclude reference="Vxs-UE-6Ix"/>
                                 <exclude reference="bwT-lT-khz"/>
                                 <exclude reference="OPD-bM-f5N"/>
                                 <exclude reference="nTc-tX-QPk"/>
-                                <exclude reference="0Uw-qZ-VfK"/>
                                 <exclude reference="Vc6-1P-eFL"/>
-                                <exclude reference="KVM-8r-fvR"/>
-                                <exclude reference="z7N-ie-oL2"/>
+                                <exclude reference="0Uw-qZ-VfK"/>
+                                <exclude reference="AqC-Jt-KyW"/>
+                                <exclude reference="MeS-ow-Ela"/>
+                                <exclude reference="xZT-fj-ew5"/>
                                 <exclude reference="ShW-sr-qdj"/>
                                 <exclude reference="ZD4-WV-3um"/>
                                 <exclude reference="dvv-1c-hpg"/>
@@ -177,18 +174,21 @@
                                 <include reference="d5x-oy-Fjc"/>
                                 <include reference="QhE-eA-6DQ"/>
                                 <include reference="jUC-Cc-tsn"/>
+                                <include reference="dJq-uI-Z5s"/>
                             </mask>
                             <mask key="constraints">
                                 <include reference="dMp-X7-epi"/>
                                 <include reference="maz-yj-oeO"/>
+                                <include reference="JaC-8T-NyA"/>
                                 <include reference="Vxs-UE-6Ix"/>
                                 <include reference="bwT-lT-khz"/>
                                 <include reference="OPD-bM-f5N"/>
                                 <include reference="nTc-tX-QPk"/>
-                                <include reference="0Uw-qZ-VfK"/>
                                 <include reference="Vc6-1P-eFL"/>
-                                <include reference="KVM-8r-fvR"/>
-                                <include reference="z7N-ie-oL2"/>
+                                <include reference="0Uw-qZ-VfK"/>
+                                <include reference="AqC-Jt-KyW"/>
+                                <include reference="MeS-ow-Ela"/>
+                                <include reference="xZT-fj-ew5"/>
                                 <include reference="ShW-sr-qdj"/>
                                 <include reference="ZD4-WV-3um"/>
                                 <include reference="dvv-1c-hpg"/>
@@ -198,14 +198,16 @@
                         </variation>
                     </view>
                     <connections>
+                        <outlet property="currentTempLabel" destination="dJq-uI-Z5s" id="a8o-J0-leo"/>
                         <outlet property="lightLabel" destination="Fjb-5w-ZCW" id="XpS-xh-Elt"/>
+                        <outlet property="lockStateLabel" destination="RdV-9E-sS6" id="m0D-kV-4A9"/>
                         <outlet property="nestTemp" destination="d5x-oy-Fjc" id="f7d-m0-btw"/>
                         <outlet property="tableView" destination="ryX-ri-b80" id="xeU-hZ-ERt"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="499.5" y="345"/>
+            <point key="canvasLocation" x="525" y="354.75"/>
         </scene>
     </scenes>
 </document>
