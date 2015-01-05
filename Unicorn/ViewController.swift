@@ -325,8 +325,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             for (id, result) in jsonResponse {
                 // nestJsonResult.append(result as NSDictionary)
                 var currentTemp : String = result["currentTemp"] as String
-                var maxTemp : String = result["maxTemp"] as String
-                var minTemp : String = result["minTemp"] as String
+                var maxTemp : NSString = result["maxTemp"] as NSString
+                var minTemp : NSString = result["minTemp"] as NSString
                 if (self.nestJsonResult[0]["currentTemp"] as String != currentTemp) {
                     self.nestJsonResult[0].setValue(currentTemp, forKey: "currentTemp")
                     dispatch_async(dispatch_get_main_queue()) {
@@ -340,7 +340,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     dispatch_async(dispatch_get_main_queue()) {
                         self.nestTemp.text = "(\(minTemp) - \(maxTemp))"
                         println("Nest temp updated to (\(minTemp) - \(maxTemp))")
+                        var minimumTemp : Double = minTemp.doubleValue
+                        var maximumTemp : Double = maxTemp.doubleValue
+                        self.rangeSlider.lowerValue = minimumTemp
+                        self.rangeSlider.upperValue = maximumTemp
                     }
+                    
                 }
             }
             

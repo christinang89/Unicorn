@@ -25,7 +25,7 @@ class RangeSlider: UIControl {
         }
     }
     
-    var maximumValue: Double = 80.0 {
+    var maximumValue: Double = 82.0 {
         didSet {
             updateLayerFrames()
         }
