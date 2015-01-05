@@ -34,26 +34,26 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         view.addSubview(rangeSlider)
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
         rangeSlider.addTarget(self, action: "rangeSliderValueChanged:", forControlEvents: .ValueChanged)
-        checkNests()
         
-        let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-        //        dispatch_async(backgroundQueue, {
-        //            for( var i: Int = 0; i < 100; i++ )
-        //            {
-        //                println("This is run on the background queue")
-        //                NSThread.sleepForTimeInterval(1)
-        //                self.pollLights()
-        //                //self.tableView.reloadData()
-        //            }
-        //
-        //        })
+            
+         let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+         let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                dispatch_async(backgroundQueue, {
+                    for( var i: Int = 0; i < 100; i++ )
+                    {
+                        println("This is run on the background queue")
+                        NSThread.sleepForTimeInterval(1)
+                        self.pollLights()
+                        self.tableView.reloadData()
+                    }
         
-        //        let time = dispatch_time(DISPATCH_TIME_NOW, Int64(NSEC_PER_SEC))
-        //        dispatch_after(time, dispatch_get_main_queue()) {
-        //            self.rangeSlider.trackHighlightTintColor = UIColor.redColor()
-        //            self.rangeSlider.curvaceousness = 0.0
-        //        }
+                })
+        
+//                let time = dispatch_time(DISPATCH_TIME_NOW, Int64(NSEC_PER_SEC))
+//                dispatch_after(time, dispatch_get_main_queue()) {
+//                    self.rangeSlider.trackHighlightTintColor = UIColor.redColor()
+//                    self.rangeSlider.curvaceousness = 0.0
+//                }
         
         
     }
@@ -177,11 +177,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 var lightId : String = result["id"] as String
                 var tempSwitch : UISwitch = lightToggles[lightId]! as UISwitch
                 if (tempSwitch.on != lightState) {
-                    tempSwitch.setOn(lightState, animated: true)
-                    
-                    checkLights()
-                    self.tableView.reloadData()
-                    println("changed to \(lightState)")
+                    dispatch_async(dispatch_get_main_queue()) {
+                        tempSwitch.setOn(lightState, animated: true)
+                    }
+                    // tempSwitch.setOn(lightState, animated: true)
+                    // checkLights()
+                    //self.tableView.reloadData()
+                    //println("changed to \(lightState)")
                 }
             }
         }
