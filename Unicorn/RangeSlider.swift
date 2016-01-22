@@ -98,17 +98,17 @@ class RangeSlider: UIControl {
         
         // initialise position of sliders
         checkNests()
-        var minTemp : NSString = self.nestJsonResult[0]["minTemp"] as NSString
-        var minimumTemp : Double = minTemp.doubleValue
-        var maxTemp : NSString = self.nestJsonResult[0]["maxTemp"] as NSString
-        var maximumTemp : Double = maxTemp.doubleValue
+        let minTemp : NSString = self.nestJsonResult[0]["minTemp"] as! NSString
+        let minimumTemp : Double = minTemp.doubleValue
+        let maxTemp : NSString = self.nestJsonResult[0]["maxTemp"] as! NSString
+        let maximumTemp : Double = maxTemp.doubleValue
         
         self.lowerValue = minimumTemp
         self.upperValue = maximumTemp
         
     }
     
-    required init(coder: NSCoder) {
+    required init?(coder: NSCoder) {
         super.init(coder: coder)
         lowerThumbLayer.rangeSlider = self
         upperThumbLayer.rangeSlider = self
@@ -117,7 +117,7 @@ class RangeSlider: UIControl {
     func updateLayerFrames() {
         CATransaction.begin()
         CATransaction.setDisableActions(true)
-        trackLayer.frame = bounds.rectByInsetting(dx: 0.0, dy: bounds.height / 3)
+        trackLayer.frame = bounds.insetBy(dx: 0.0, dy: bounds.height / 3)
         trackLayer.setNeedsDisplay()
         
         let lowerThumbCenter = CGFloat(positionForValue(lowerValue))
@@ -135,7 +135,7 @@ class RangeSlider: UIControl {
     }
     
     func positionForValue(value: Double) -> Double {
-        let widthDouble = Double(thumbWidth)
+        // let widthDouble = Double(thumbWidth)
         return Double(bounds.width - thumbWidth) * (value - minimumValue) /
             (maximumValue - minimumValue) + Double(thumbWidth / 2.0)
     }
@@ -146,7 +146,7 @@ class RangeSlider: UIControl {
         }
     }
     
-    override func beginTrackingWithTouch(touch: UITouch, withEvent event: UIEvent) -> Bool {
+    override func beginTrackingWithTouch(touch: UITouch, withEvent event: UIEvent?) -> Bool {
         previousLocation = touch.locationInView(self)
         
         // Hit test the thumb layers
@@ -163,7 +163,7 @@ class RangeSlider: UIControl {
         return min(max(value, lowerValue), upperValue)
     }
     
-    override func continueTrackingWithTouch(touch: UITouch, withEvent event: UIEvent) -> Bool {
+    override func continueTrackingWithTouch(touch: UITouch, withEvent event: UIEvent?) -> Bool {
         let location = touch.locationInView(self)
         
         // 1. Determine by how much the user has dragged
@@ -184,7 +184,7 @@ class RangeSlider: UIControl {
         return true
     }
     
-    override func endTrackingWithTouch(touch: UITouch, withEvent event: UIEvent) {
+    override func endTrackingWithTouch(touch: UITouch?, withEvent event: UIEvent?) {
         
         sendActionsForControlEvents(.ValueChanged)
         
@@ -198,27 +198,24 @@ class RangeSlider: UIControl {
     
     func checkNests() {
         // create the request & response
-        var url : String = "http://home.isidorechan.com/nests"
-        var request : NSMutableURLRequest = NSMutableURLRequest()
+        let url : String = "http://home.isidorechan.com/nests"
+        let request : NSMutableURLRequest = NSMutableURLRequest()
         var response: NSURLResponse?
-        var error: NSError?
         request.URL = NSURL(string: url)
         request.HTTPMethod = "GET"
         
         // send the request
-        var dataVal: NSData = NSURLConnection.sendSynchronousRequest(request, returningResponse: &response, error: &error)!
-        let jsonResponse: NSDictionary! = NSJSONSerialization.JSONObjectWithData(dataVal, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
-        
-        // look at the response
-        if (jsonResponse != nil) {
-            for (id, result) in jsonResponse {
-                nestJsonResult.append(result as NSDictionary)
+        let dataVal: NSData = try! NSURLConnection.sendSynchronousRequest(request, returningResponse: &response)
+        do {
+            if let jsonResponse = try NSJSONSerialization.JSONObjectWithData(dataVal, options: NSJSONReadingOptions.MutableContainers) as? NSDictionary {
+                for (_, result) in jsonResponse {
+                    nestJsonResult.append(result as! NSDictionary)
+                }
             }
+        } catch let error as NSError {
+            print(error.localizedDescription)
         }
-        else {
-            println("No HTTP response")
-            println(error)
-        }
+        
         
     }
 
