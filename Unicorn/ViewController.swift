@@ -31,11 +31,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // Do any additional setup after loading the view, typically from a nib.
         view.addSubview(rangeSlider)
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        rangeSlider.addTarget(self, action: "rangeSliderValueChanged:", forControlEvents: .ValueChanged)
+        rangeSlider.addTarget(self, action: #selector(ViewController.rangeSliderValueChanged(_:)), forControlEvents: .ValueChanged)
         let qualityOfServiceClass = QOS_CLASS_BACKGROUND
         let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
         dispatch_async(backgroundQueue, {
-            for( var i: Int = 0; i < 100; i++ )
+            for _ in 0..<100
             {
                 NSThread.sleepForTimeInterval(1)
                 self.pollLights()
@@ -117,7 +117,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     let s = UISwitch(frame:CGRectMake(0, 0, 0, 0))
                     let lightId = result["id"] as! String
                     s.tag = Int(lightId)!
-                    s.addTarget(self, action: "switchValueDidChange:", forControlEvents: .ValueChanged);
+                    s.addTarget(self, action: #selector(ViewController.switchValueDidChange(_:)), forControlEvents: .ValueChanged);
                     
                     if result["state"]! as! NSString == "1" {
                         s.setOn(true, animated: false)

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
         <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -50,13 +51,13 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Lights" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fjb-5w-ZCW">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="20"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Front Door" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oLm-qZ-0uH">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="20"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RdV-9E-sS6">
@@ -71,31 +72,31 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Air Conditioning" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KlG-88-jTs">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="20"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d5x-oy-Fjc">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="68" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QhE-eA-6DQ">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="82" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jUC-Cc-tsn">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dJq-uI-Z5s">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
                                     <rect key="frame" x="290" y="79" width="0.0" height="0.0"/>
@@ -145,23 +146,23 @@
                                 <exclude reference="dJq-uI-Z5s"/>
                             </mask>
                             <mask key="constraints">
-                                <exclude reference="dMp-X7-epi"/>
-                                <exclude reference="maz-yj-oeO"/>
+                                <exclude reference="Z3B-xi-Z3t"/>
+                                <exclude reference="0Uw-qZ-VfK"/>
                                 <exclude reference="JaC-8T-NyA"/>
                                 <exclude reference="Vxs-UE-6Ix"/>
                                 <exclude reference="bwT-lT-khz"/>
                                 <exclude reference="OPD-bM-f5N"/>
                                 <exclude reference="nTc-tX-QPk"/>
-                                <exclude reference="Vc6-1P-eFL"/>
-                                <exclude reference="0Uw-qZ-VfK"/>
                                 <exclude reference="AqC-Jt-KyW"/>
                                 <exclude reference="MeS-ow-Ela"/>
                                 <exclude reference="xZT-fj-ew5"/>
-                                <exclude reference="ShW-sr-qdj"/>
-                                <exclude reference="ZD4-WV-3um"/>
                                 <exclude reference="dvv-1c-hpg"/>
                                 <exclude reference="fj2-0F-Ezv"/>
-                                <exclude reference="Z3B-xi-Z3t"/>
+                                <exclude reference="dMp-X7-epi"/>
+                                <exclude reference="maz-yj-oeO"/>
+                                <exclude reference="ShW-sr-qdj"/>
+                                <exclude reference="ZD4-WV-3um"/>
+                                <exclude reference="Vc6-1P-eFL"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
@@ -177,23 +178,23 @@
                                 <include reference="dJq-uI-Z5s"/>
                             </mask>
                             <mask key="constraints">
-                                <include reference="dMp-X7-epi"/>
-                                <include reference="maz-yj-oeO"/>
+                                <include reference="Z3B-xi-Z3t"/>
+                                <include reference="0Uw-qZ-VfK"/>
                                 <include reference="JaC-8T-NyA"/>
                                 <include reference="Vxs-UE-6Ix"/>
                                 <include reference="bwT-lT-khz"/>
                                 <include reference="OPD-bM-f5N"/>
                                 <include reference="nTc-tX-QPk"/>
-                                <include reference="Vc6-1P-eFL"/>
-                                <include reference="0Uw-qZ-VfK"/>
                                 <include reference="AqC-Jt-KyW"/>
                                 <include reference="MeS-ow-Ela"/>
                                 <include reference="xZT-fj-ew5"/>
-                                <include reference="ShW-sr-qdj"/>
-                                <include reference="ZD4-WV-3um"/>
                                 <include reference="dvv-1c-hpg"/>
                                 <include reference="fj2-0F-Ezv"/>
-                                <include reference="Z3B-xi-Z3t"/>
+                                <include reference="dMp-X7-epi"/>
+                                <include reference="maz-yj-oeO"/>
+                                <include reference="ShW-sr-qdj"/>
+                                <include reference="ZD4-WV-3um"/>
+                                <include reference="Vc6-1P-eFL"/>
                             </mask>
                         </variation>
                     </view>
