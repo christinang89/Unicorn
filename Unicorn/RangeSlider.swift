@@ -10,6 +10,9 @@ import UIKit
 import QuartzCore
 
 class RangeSlider: UIControl {
+    
+    // NOTE TO SELF: REPLACE THIS WITH ACTUAL AUTHKEY
+    var authKey : String = "// NOTE TO SELF: REPLACE THIS WITH ACTUAL AUTHKEY"
 
     /*
     // Only override drawRect: if you perform custom drawing.
@@ -18,6 +21,7 @@ class RangeSlider: UIControl {
         // Drawing code
     }
     */
+    
     
     var minimumValue: Double = 68.0 {
         didSet {
@@ -203,6 +207,7 @@ class RangeSlider: UIControl {
         var response: NSURLResponse?
         request.URL = NSURL(string: url)
         request.HTTPMethod = "GET"
+        request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         // send the request
         let dataVal: NSData = try! NSURLConnection.sendSynchronousRequest(request, returningResponse: &response)

@@ -24,6 +24,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     var password : String = "un1cornH0rn"
     
+    
+    var authKey : String = "// NOTE TO SELF: REPLACE THIS WITH ACTUAL AUTHKEY"
+    
     let rangeSlider = RangeSlider(frame: CGRectZero)
     
     override func viewDidLoad() {
@@ -80,6 +83,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let request : NSMutableURLRequest = NSMutableURLRequest()
         request.URL = NSURL(string: url)
         request.HTTPMethod = "GET"
+        request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         cell.textLabel?.text = self.jsonResult[indexPath.row]["name"]! as! NSString as String;
         
@@ -106,6 +110,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         var response: NSURLResponse?
         request.URL = NSURL(string: url)
         request.HTTPMethod = "GET"
+        request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         // send the request
         let dataVal: NSData = try! NSURLConnection.sendSynchronousRequest(request, returningResponse: &response)
@@ -145,6 +150,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         var response: NSURLResponse?
         request.URL = NSURL(string: url)
         request.HTTPMethod = "GET"
+        request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         // send the request
         let dataVal: NSData = try! NSURLConnection.sendSynchronousRequest(request, returningResponse: &response)
@@ -177,6 +183,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         var response: NSURLResponse?
         request.URL = NSURL(string: url)
         request.HTTPMethod = "GET"
+        request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         // send the request
         let dataVal: NSData = try! NSURLConnection.sendSynchronousRequest(request, returningResponse: &response)
@@ -213,6 +220,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         var response: NSURLResponse?
         request.URL = NSURL(string: url)
         request.HTTPMethod = "GET"
+        request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         // send the request
         let dataVal: NSData = try! NSURLConnection.sendSynchronousRequest(request, returningResponse: &response)
@@ -251,6 +259,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         var response: NSURLResponse?
         request.URL = NSURL(string: url)
         request.HTTPMethod = "GET"
+        request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         // send the request
         let dataVal: NSData = try! NSURLConnection.sendSynchronousRequest(request, returningResponse: &response)
@@ -292,6 +301,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         var response: NSURLResponse?
         request.URL = NSURL(string: url)
         request.HTTPMethod = "GET"
+        request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         // send the request
         let dataVal: NSData = try! NSURLConnection.sendSynchronousRequest(request, returningResponse: &response)
@@ -349,6 +359,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         request.HTTPBody = jsonString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
         request.HTTPMethod = "PUT"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         do {
             // send the request
@@ -381,6 +392,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         request.HTTPBody = jsonString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
         request.HTTPMethod = "PUT"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         // send the request
         NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue(), completionHandler:{ (response:NSURLResponse?, data: NSData?, error: NSError?) -> Void in
@@ -414,6 +426,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         request.HTTPBody = jsonString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
         request.HTTPMethod = "PUT"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         // send the request
         NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue(), completionHandler:{ (response:NSURLResponse?, data: NSData?, error: NSError?) -> Void in
