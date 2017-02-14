@@ -27,20 +27,20 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     var authKey : String = "// NOTE TO SELF: REPLACE THIS WITH ACTUAL AUTHKEY"
     
-    let rangeSlider = RangeSlider(frame: CGRectZero)
+    let rangeSlider = RangeSlider(frame: CGRect.zero)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         view.addSubview(rangeSlider)
-        self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        rangeSlider.addTarget(self, action: #selector(ViewController.rangeSliderValueChanged(_:)), forControlEvents: .ValueChanged)
-        let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-        dispatch_async(backgroundQueue, {
+        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        rangeSlider.addTarget(self, action: #selector(ViewController.rangeSliderValueChanged(_:)), for: .valueChanged)
+        let qualityOfServiceClass = DispatchQoS.QoSClass.background
+        let backgroundQueue = DispatchQueue.global(qos: qualityOfServiceClass)
+        backgroundQueue.async(execute: {
             for _ in 0..<100
             {
-                NSThread.sleepForTimeInterval(1)
+                Thread.sleep(forTimeInterval: 1)
                 self.pollLights()
                 self.pollLocks()
                 self.pollNests()
@@ -57,7 +57,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             width: width, height: 30.0)
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         checkLights()
         checkNests()
@@ -71,18 +71,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     // drawing of the uitableview
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.jsonResult.count;
     }
     
     // populating data in uitableview
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell:UITableViewCell = self.tableView.dequeueReusableCellWithIdentifier("cell")! as UITableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell:UITableViewCell = self.tableView.dequeueReusableCell(withIdentifier: "cell")! as UITableViewCell
         let url : String = "http://home.isidorechan.com/lights"
         let request : NSMutableURLRequest = NSMutableURLRequest()
-        request.URL = NSURL(string: url)
-        request.HTTPMethod = "GET"
+        request.url = URL(string: url)
+        request.httpMethod = "GET"
         request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         cell.textLabel?.text = self.jsonResult[indexPath.row]["name"]! as! NSString as String;
@@ -91,7 +91,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         let s = lightToggles[lightId]
         
-        cell.accessoryType = UITableViewCellAccessoryType.None
+        cell.accessoryType = UITableViewCellAccessoryType.none
         cell.accessoryView = s
         
         return cell
@@ -107,30 +107,30 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // create the request & response
         let url : String = "http://home.isidorechan.com/lights"
         let request : NSMutableURLRequest = NSMutableURLRequest()
-        var response: NSURLResponse?
-        request.URL = NSURL(string: url)
-        request.HTTPMethod = "GET"
+        var response: URLResponse?
+        request.url = URL(string: url)
+        request.httpMethod = "GET"
         request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         // send the request
-        let dataVal: NSData = try! NSURLConnection.sendSynchronousRequest(request, returningResponse: &response)
+        let dataVal: Data = try! NSURLConnection.sendSynchronousRequest(request as URLRequest, returning: &response)
         do {
-            if let jsonResponse = try NSJSONSerialization.JSONObjectWithData(dataVal, options: NSJSONReadingOptions.MutableContainers) as? NSDictionary {
+            if let jsonResponse = try JSONSerialization.jsonObject(with: dataVal, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary {
                 for (_, result) in jsonResponse {
                     jsonResult.append(result as! NSDictionary)
                     
-                    let s = UISwitch(frame:CGRectMake(0, 0, 0, 0))
-                    let lightId = result["id"] as! String
+                    let s = UISwitch(frame:CGRect(x: 0, y: 0, width: 0, height: 0))
+                    let lightId = (result as? NSDictionary)?["id"] as! String
                     s.tag = Int(lightId)!
-                    s.addTarget(self, action: #selector(ViewController.switchValueDidChange(_:)), forControlEvents: .ValueChanged);
+                    s.addTarget(self, action: #selector(ViewController.switchValueDidChange(_:)), for: .valueChanged);
                     
-                    if result["state"]! as! NSString == "1" {
+                    if (result as? NSDictionary)?["state"]! as! NSString == "1" {
                         s.setOn(true, animated: false)
                     } else {
                         s.setOn(false, animated: false)
                     }
                     
-                    lightToggles.updateValue(s, forKey: result["id"]! as! NSString as String)
+                    lightToggles.updateValue(s, forKey: (result as? NSDictionary)?["id"]! as! NSString as String)
                     
                 }
             }
@@ -147,20 +147,20 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // create the request & response
         let url : String = "http://home.isidorechan.com/nests"
         let request : NSMutableURLRequest = NSMutableURLRequest()
-        var response: NSURLResponse?
-        request.URL = NSURL(string: url)
-        request.HTTPMethod = "GET"
+        var response: URLResponse?
+        request.url = URL(string: url)
+        request.httpMethod = "GET"
         request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         // send the request
-        let dataVal: NSData = try! NSURLConnection.sendSynchronousRequest(request, returningResponse: &response)
+        let dataVal: Data = try! NSURLConnection.sendSynchronousRequest(request as URLRequest, returning: &response)
         do {
-            if let jsonResponse = try NSJSONSerialization.JSONObjectWithData(dataVal, options: NSJSONReadingOptions.MutableContainers) as? NSDictionary {
+            if let jsonResponse = try JSONSerialization.jsonObject(with: dataVal, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary {
                 for (_, result) in jsonResponse {
                     nestJsonResult.append(result as! NSDictionary)
-                    let currentTemp : String = result["currentTemp"] as! String
-                    let maxTemp : String = result["maxTemp"] as! String
-                    let minTemp : String = result["minTemp"] as! String
+                    let currentTemp : String = (result as? NSDictionary)?["currentTemp"] as! String
+                    let maxTemp : String = (result as? NSDictionary)?["maxTemp"] as! String
+                    let minTemp : String = (result as? NSDictionary)?["minTemp"] as! String
                     currentTempLabel.text = "\(currentTemp) "
                     nestTemp.text = "(\(minTemp) - \(maxTemp))"
                 }
@@ -180,24 +180,24 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // create the request & response
         let url : String = "http://home.isidorechan.com/locks"
         let request : NSMutableURLRequest = NSMutableURLRequest()
-        var response: NSURLResponse?
-        request.URL = NSURL(string: url)
-        request.HTTPMethod = "GET"
+        var response: URLResponse?
+        request.url = URL(string: url)
+        request.httpMethod = "GET"
         request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         // send the request
-        let dataVal: NSData = try! NSURLConnection.sendSynchronousRequest(request, returningResponse: &response)
+        let dataVal: Data = try! NSURLConnection.sendSynchronousRequest(request as URLRequest, returning: &response)
         do {
-            if let jsonResponse = try NSJSONSerialization.JSONObjectWithData(dataVal, options: NSJSONReadingOptions.MutableContainers) as? NSDictionary {
+            if let jsonResponse = try JSONSerialization.jsonObject(with: dataVal, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary {
                 for (_, result) in jsonResponse {
                 lockJsonResult.append(result as! NSDictionary)
                 
-                if result["state"]! as! NSString == "1" {
-                    lockStateLabel.setTitle("Locked", forState: UIControlState.Selected)
-                    lockStateLabel.selected = true
+                if (result as? NSDictionary)?["state"]! as! NSString == "1" {
+                    lockStateLabel.setTitle("Locked", for: UIControlState.selected)
+                    lockStateLabel.isSelected = true
                 } else {
-                    lockStateLabel.setTitle("Unlocked", forState: UIControlState.Normal)
-                    lockStateLabel.selected = false
+                    lockStateLabel.setTitle("Unlocked", for: UIControlState())
+                    lockStateLabel.isSelected = false
                 }
                 }
             }
@@ -217,27 +217,27 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // create the request & response
         let url : String = "http://home.isidorechan.com/lights"
         let request : NSMutableURLRequest = NSMutableURLRequest()
-        var response: NSURLResponse?
-        request.URL = NSURL(string: url)
-        request.HTTPMethod = "GET"
+        var response: URLResponse?
+        request.url = URL(string: url)
+        request.httpMethod = "GET"
         request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         // send the request
-        let dataVal: NSData = try! NSURLConnection.sendSynchronousRequest(request, returningResponse: &response)
+        let dataVal: Data = try! NSURLConnection.sendSynchronousRequest(request as URLRequest, returning: &response)
         do {
-            if let jsonResponse = try NSJSONSerialization.JSONObjectWithData(dataVal, options: NSJSONReadingOptions.MutableContainers) as? NSDictionary {
+            if let jsonResponse = try JSONSerialization.jsonObject(with: dataVal, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary {
                 for (_, result) in jsonResponse {
-                    let state : String = result["state"] as! String
+                    let state : String = (result as? NSDictionary)?["state"] as! String
                     var lightState : Bool
                     if (state == "1") {
                         lightState = true
                     } else {
                         lightState = false
                     }
-                    let lightId : String = result["id"] as! String
+                    let lightId : String = (result as? NSDictionary)?["id"] as! String
                     let tempSwitch : UISwitch = lightToggles[lightId]! as UISwitch
-                    if (tempSwitch.on != lightState) {
-                        dispatch_async(dispatch_get_main_queue()) {
+                    if (tempSwitch.isOn != lightState) {
+                        DispatchQueue.main.async {
                             tempSwitch.setOn(lightState, animated: true)
                             print("light \(lightId) changed to \(lightState)")
                         }
@@ -256,30 +256,30 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // create the request & response
         let url : String = "http://home.isidorechan.com/locks"
         let request : NSMutableURLRequest = NSMutableURLRequest()
-        var response: NSURLResponse?
-        request.URL = NSURL(string: url)
-        request.HTTPMethod = "GET"
+        var response: URLResponse?
+        request.url = URL(string: url)
+        request.httpMethod = "GET"
         request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         // send the request
-        let dataVal: NSData = try! NSURLConnection.sendSynchronousRequest(request, returningResponse: &response)
+        let dataVal: Data = try! NSURLConnection.sendSynchronousRequest(request as URLRequest, returning: &response)
         do {
-            if let jsonResponse = try NSJSONSerialization.JSONObjectWithData(dataVal, options: NSJSONReadingOptions.MutableContainers) as? NSDictionary {
+            if let jsonResponse = try JSONSerialization.jsonObject(with: dataVal, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary {
                 for (_, result) in jsonResponse {
-                    let state : String = result["state"] as! String
+                    let state : String = (result as? NSDictionary)?["state"] as! String
                     if (state == "1") {
-                        if self.lockStateLabel.selected != true {
-                            dispatch_async(dispatch_get_main_queue()) {
-                                self.lockStateLabel.selected = true
-                                self.lockStateLabel.setTitle("Locked", forState: UIControlState.Selected)
+                        if self.lockStateLabel.isSelected != true {
+                            DispatchQueue.main.async {
+                                self.lockStateLabel.isSelected = true
+                                self.lockStateLabel.setTitle("Locked", for: UIControlState.selected)
                                 print("lock changed to locked")
                             }
                         }
                     } else {
-                        if self.lockStateLabel.selected == true {
-                            dispatch_async(dispatch_get_main_queue()) {
-                                self.lockStateLabel.selected = false
-                                self.lockStateLabel.setTitle("Unlocked", forState: UIControlState.Normal)
+                        if self.lockStateLabel.isSelected == true {
+                            DispatchQueue.main.async {
+                                self.lockStateLabel.isSelected = false
+                                self.lockStateLabel.setTitle("Unlocked", for: UIControlState())
                                 print("lock changed to unlocked")
                             }
                         }
@@ -298,31 +298,31 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // create the request & response
         let url : String = "http://home.isidorechan.com/nests"
         let request : NSMutableURLRequest = NSMutableURLRequest()
-        var response: NSURLResponse?
-        request.URL = NSURL(string: url)
-        request.HTTPMethod = "GET"
+        var response: URLResponse?
+        request.url = URL(string: url)
+        request.httpMethod = "GET"
         request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         // send the request
-        let dataVal: NSData = try! NSURLConnection.sendSynchronousRequest(request, returningResponse: &response)
+        let dataVal: Data = try! NSURLConnection.sendSynchronousRequest(request as URLRequest, returning: &response)
         do {
-            if let jsonResponse = try NSJSONSerialization.JSONObjectWithData(dataVal, options: NSJSONReadingOptions.MutableContainers) as? NSDictionary {
+            if let jsonResponse = try JSONSerialization.jsonObject(with: dataVal, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary {
                 for (_, result) in jsonResponse {
                     // nestJsonResult.append(result as NSDictionary)
-                    let currentTemp : String = result["currentTemp"] as! String
-                    let maxTemp : NSString = result["maxTemp"] as! NSString
-                    let minTemp : NSString = result["minTemp"] as! NSString
+                    let currentTemp : String = (result as? NSDictionary)?["currentTemp"] as! String
+                    let maxTemp : NSString = (result as? NSDictionary)?["maxTemp"] as! NSString
+                    let minTemp : NSString = (result as? NSDictionary)?["minTemp"] as! NSString
                     if (self.nestJsonResult[0]["currentTemp"] as! String != currentTemp) {
                         self.nestJsonResult[0].setValue(currentTemp, forKey: "currentTemp")
-                        dispatch_async(dispatch_get_main_queue()) {
+                        DispatchQueue.main.async {
                             self.currentTempLabel.text = currentTemp
                             print("Nest current temp updated to \(currentTemp)")
                         }
                     }
-                    if (self.nestJsonResult[0]["minTemp"] as! String != minTemp || self.nestJsonResult[0]["maxTemp"] as! String != maxTemp) {
+                    if (self.nestJsonResult[0]["minTemp"] as! String != minTemp as String || self.nestJsonResult[0]["maxTemp"] as! String != maxTemp as String) {
                         self.nestJsonResult[0].setValue(minTemp, forKey: "minTemp")
                         self.nestJsonResult[0].setValue(maxTemp, forKey: "maxTemp")
-                        dispatch_async(dispatch_get_main_queue()) {
+                        DispatchQueue.main.async {
                             self.nestTemp.text = "(\(minTemp) - \(maxTemp))"
                             print("Nest temp updated to (\(minTemp) - \(maxTemp))")
                             let minimumTemp : Double = minTemp.doubleValue
@@ -346,30 +346,30 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     // synchronous call to switch light state
     
-    func setLights(lightId : String, state : String) {
+    func setLights(_ lightId : String, state : String) {
         // create the request & response
         let url : String = "http://home.isidorechan.com/lights/" + lightId
         let request : NSMutableURLRequest = NSMutableURLRequest()
-        var response: NSURLResponse?
+        var response: URLResponse?
         var error: NSError?
         
         // create some JSON data and configure the request
         let jsonString = "{\"state\":\"" + state + "\"}"
-        request.URL = NSURL(string: url)
-        request.HTTPBody = jsonString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
-        request.HTTPMethod = "PUT"
+        request.url = URL(string: url)
+        request.httpBody = jsonString.data(using: String.Encoding.utf8, allowLossyConversion: true)
+        request.httpMethod = "PUT"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         do {
             // send the request
-            try NSURLConnection.sendSynchronousRequest(request, returningResponse: &response)
+            try NSURLConnection.sendSynchronousRequest(request as URLRequest, returning: &response)
         } catch let error1 as NSError {
             error = error1
         }
         
         // look at the response
-        if let httpResponse = response as? NSHTTPURLResponse {
+        if let httpResponse = response as? HTTPURLResponse {
             print("HTTP response: \(httpResponse.statusCode)")
             print(response)
         } else {
@@ -381,25 +381,25 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     // async call to switch nest temps
     
-    func setNests(nestId : String, minTemp : String, maxTemp : String) {
+    func setNests(_ nestId : String, minTemp : String, maxTemp : String) {
         // create the request & response
         let url : String = "http://home.isidorechan.com/nests/" + nestId
         let request : NSMutableURLRequest = NSMutableURLRequest()
         
         // create some JSON data and configure the request
         let jsonString = "{\"password\":\"" + password + "\", \"minTemp\":\"" + minTemp + "\", \"maxTemp\":\"" + maxTemp + "\"}"
-        request.URL = NSURL(string: url)
-        request.HTTPBody = jsonString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
-        request.HTTPMethod = "PUT"
+        request.url = URL(string: url)
+        request.httpBody = jsonString.data(using: String.Encoding.utf8, allowLossyConversion: true)
+        request.httpMethod = "PUT"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         // send the request
-        NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue(), completionHandler:{ (response:NSURLResponse?, data: NSData?, error: NSError?) -> Void in
+        NSURLConnection.sendAsynchronousRequest(request as URLRequest, queue: OperationQueue(), completionHandler:{ (response:URLResponse?, data: Data?, error: NSError?) -> Void in
             do {
-                if let jsonResult = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.MutableContainers) as? NSDictionary {
+                if let jsonResult = try JSONSerialization.jsonObject(with: data!, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary {
                     print(jsonResult)
-                    dispatch_async(dispatch_get_main_queue()) {
+                    DispatchQueue.main.async {
                         self.nestTemp.text = "(\(minTemp) - \(maxTemp))"
                     }
                     
@@ -409,42 +409,42 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
             
             
-        })
+        } as! (URLResponse?, Data?, Error?) -> Void)
         
     }
     
     // async call to switch lock state
     
-    func setLocks(lockId : String, state : String) {
+    func setLocks(_ lockId : String, state : String) {
         // create the request & response
         let url : String = "http://home.isidorechan.com/locks/" + lockId
         let request : NSMutableURLRequest = NSMutableURLRequest()
         
         // create some JSON data and configure the request
         let jsonString = "{\"password\":\"" + password + "\", \"state\":\"" + state + "\"}"
-        request.URL = NSURL(string: url)
-        request.HTTPBody = jsonString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
-        request.HTTPMethod = "PUT"
+        request.url = URL(string: url)
+        request.httpBody = jsonString.data(using: String.Encoding.utf8, allowLossyConversion: true)
+        request.httpMethod = "PUT"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         // send the request
-        NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue(), completionHandler:{ (response:NSURLResponse?, data: NSData?, error: NSError?) -> Void in
+        NSURLConnection.sendAsynchronousRequest(request as URLRequest, queue: OperationQueue(), completionHandler:{ (response:URLResponse?, data: Data?, error: NSError?) -> Void in
             do {
-                if let jsonResult = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.MutableContainers) as? NSDictionary {
+                if let jsonResult = try JSONSerialization.jsonObject(with: data!, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary {
                     // process jsonResult
                     print(jsonResult)
                     
                     if jsonResult["state"] != nil {
-                        dispatch_async(dispatch_get_main_queue()) {
+                        DispatchQueue.main.async {
                             if jsonResult["state"] as! NSString == "1" {
-                                self.lockStateLabel.selected = true
-                                self.lockStateLabel.setTitle("Locked", forState: UIControlState.Selected)
+                                self.lockStateLabel.isSelected = true
+                                self.lockStateLabel.setTitle("Locked", for: UIControlState.selected)
                             }
                             else {
                                 
-                                self.lockStateLabel.selected = false
-                                self.lockStateLabel.setTitle("Unlocked", forState: UIControlState.Normal)
+                                self.lockStateLabel.isSelected = false
+                                self.lockStateLabel.setTitle("Unlocked", for: UIControlState())
                             }
                             
                         }
@@ -456,12 +456,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
             
             
-            dispatch_async(dispatch_get_main_queue()) {
-                self.lockStateLabel.enabled = true
+            DispatchQueue.main.async {
+                self.lockStateLabel.isEnabled = true
             }
             
             
-        })
+        } as! (URLResponse?, Data?, Error?) -> Void)
         
     }
     
@@ -469,10 +469,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     // turn lights on/off based on switch action
     
-    func switchValueDidChange(sender:UISwitch!) {
+    func switchValueDidChange(_ sender:UISwitch!) {
         var newState : String
         
-        if (sender.on == true){
+        if (sender.isOn == true){
             newState = "1"
         }
         else{
@@ -485,10 +485,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     // set temp based on slider values
     
-    func rangeSliderValueChanged(rangeSlider: RangeSlider) {
+    func rangeSliderValueChanged(_ rangeSlider: RangeSlider) {
         let minimumTemp : Int = Int(rangeSlider.lowerValue)
         let maximumTemp : Int = Int(rangeSlider.upperValue)
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             self.nestTemp.text = "(\(minimumTemp) - \(maximumTemp))"
         }
         setNests("32", minTemp: String(minimumTemp) , maxTemp: String(maximumTemp))
@@ -497,14 +497,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     // set lock based on button action
     
-    @IBAction func switchLockState(sender: UIButton) {
+    @IBAction func switchLockState(_ sender: UIButton) {
         var newState : String
-        if sender.selected {
+        if sender.isSelected {
             newState = "0"
         } else {
             newState = "1"
         }
-        sender.enabled = false
+        sender.isEnabled = false
         setLocks("34", state: String(newState))
         print("New lock state: (\(newState))")
     }

@@ -65,7 +65,7 @@ class RangeSlider: UIControl {
         }
     }
     
-    var thumbTintColor: UIColor = UIColor.whiteColor() {
+    var thumbTintColor: UIColor = UIColor.white {
         didSet {
             lowerThumbLayer.setNeedsDisplay()
             upperThumbLayer.setNeedsDisplay()
@@ -89,15 +89,15 @@ class RangeSlider: UIControl {
         super.init(frame: frame)
 
         trackLayer.rangeSlider = self
-        trackLayer.contentsScale = UIScreen.mainScreen().scale
+        trackLayer.contentsScale = UIScreen.main.scale
         layer.addSublayer(trackLayer)
         
         lowerThumbLayer.rangeSlider = self
-        lowerThumbLayer.contentsScale = UIScreen.mainScreen().scale
+        lowerThumbLayer.contentsScale = UIScreen.main.scale
         layer.addSublayer(lowerThumbLayer)
         
         upperThumbLayer.rangeSlider = self
-        upperThumbLayer.contentsScale = UIScreen.mainScreen().scale
+        upperThumbLayer.contentsScale = UIScreen.main.scale
         layer.addSublayer(upperThumbLayer)
         
         // initialise position of sliders
@@ -138,7 +138,7 @@ class RangeSlider: UIControl {
         CATransaction.commit()
     }
     
-    func positionForValue(value: Double) -> Double {
+    func positionForValue(_ value: Double) -> Double {
         // let widthDouble = Double(thumbWidth)
         return Double(bounds.width - thumbWidth) * (value - minimumValue) /
             (maximumValue - minimumValue) + Double(thumbWidth / 2.0)
@@ -150,8 +150,8 @@ class RangeSlider: UIControl {
         }
     }
     
-    override func beginTrackingWithTouch(touch: UITouch, withEvent event: UIEvent?) -> Bool {
-        previousLocation = touch.locationInView(self)
+    override func beginTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
+        previousLocation = touch.location(in: self)
         
         // Hit test the thumb layers
         if lowerThumbLayer.frame.contains(previousLocation) {
@@ -163,12 +163,12 @@ class RangeSlider: UIControl {
         return lowerThumbLayer.highlighted || upperThumbLayer.highlighted
     }
     
-    func boundValue(value: Double, toLowerValue lowerValue: Double, upperValue: Double) -> Double {
+    func boundValue(_ value: Double, toLowerValue lowerValue: Double, upperValue: Double) -> Double {
         return min(max(value, lowerValue), upperValue)
     }
     
-    override func continueTrackingWithTouch(touch: UITouch, withEvent event: UIEvent?) -> Bool {
-        let location = touch.locationInView(self)
+    override func continueTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
+        let location = touch.location(in: self)
         
         // 1. Determine by how much the user has dragged
         let deltaLocation = Double(location.x - previousLocation.x)
@@ -188,9 +188,9 @@ class RangeSlider: UIControl {
         return true
     }
     
-    override func endTrackingWithTouch(touch: UITouch?, withEvent event: UIEvent?) {
+    override func endTracking(_ touch: UITouch?, with event: UIEvent?) {
         
-        sendActionsForControlEvents(.ValueChanged)
+        sendActions(for: .valueChanged)
         
         lowerThumbLayer.highlighted = false
         upperThumbLayer.highlighted = false
@@ -204,15 +204,15 @@ class RangeSlider: UIControl {
         // create the request & response
         let url : String = "http://home.isidorechan.com/nests"
         let request : NSMutableURLRequest = NSMutableURLRequest()
-        var response: NSURLResponse?
-        request.URL = NSURL(string: url)
-        request.HTTPMethod = "GET"
+        var response: URLResponse?
+        request.url = URL(string: url)
+        request.httpMethod = "GET"
         request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         // send the request
-        let dataVal: NSData = try! NSURLConnection.sendSynchronousRequest(request, returningResponse: &response)
+        let dataVal: Data = try! NSURLConnection.sendSynchronousRequest(request as URLRequest, returning: &response)
         do {
-            if let jsonResponse = try NSJSONSerialization.JSONObjectWithData(dataVal, options: NSJSONReadingOptions.MutableContainers) as? NSDictionary {
+            if let jsonResponse = try JSONSerialization.jsonObject(with: dataVal, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary {
                 for (_, result) in jsonResponse {
                     nestJsonResult.append(result as! NSDictionary)
                 }
