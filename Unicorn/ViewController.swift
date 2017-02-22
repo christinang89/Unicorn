@@ -371,10 +371,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // look at the response
         if let httpResponse = response as? HTTPURLResponse {
             print("HTTP response: \(httpResponse.statusCode)")
-            print(response)
+            print(response as Any)
         } else {
             print("No HTTP response")
-            print(error)
+            print(error as Any)
         }
     }
     
@@ -385,6 +385,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // create the request & response
         let url : String = "http://home.isidorechan.com/nests/" + nestId
         let request : NSMutableURLRequest = NSMutableURLRequest()
+        let session = URLSession.shared
         
         // create some JSON data and configure the request
         let jsonString = "{\"password\":\"" + password + "\", \"minTemp\":\"" + minTemp + "\", \"maxTemp\":\"" + maxTemp + "\"}"
@@ -395,23 +396,24 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         // send the request
-        NSURLConnection.sendAsynchronousRequest(request as URLRequest, queue: OperationQueue(), completionHandler:{ (response:URLResponse?, data: Data?, error: NSError?) -> Void in
-            do {
-                if let jsonResult = try JSONSerialization.jsonObject(with: data!, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary {
-                    print(jsonResult)
-                    DispatchQueue.main.async {
-                        self.nestTemp.text = "(\(minTemp) - \(maxTemp))"
-                    }
-                    
+        let task = session.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
+            do{
+            if let jsonResult = try JSONSerialization.jsonObject(with: data!, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary {
+                print(jsonResult)
+                DispatchQueue.main.async {
+                    self.nestTemp.text = "(\(minTemp) - \(maxTemp))"
                 }
-            } catch let error as NSError {
-                print(error.localizedDescription)
+                
             }
-            
-            
-        } as! (URLResponse?, Data?, Error?) -> Void)
-        
+        } catch let error as NSError {
+            print(error.localizedDescription)
+        }
+
+        })
+    
+        task.resume()
     }
+    
     
     // async call to switch lock state
     
@@ -419,6 +421,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // create the request & response
         let url : String = "http://home.isidorechan.com/locks/" + lockId
         let request : NSMutableURLRequest = NSMutableURLRequest()
+        let session = URLSession.shared
         
         // create some JSON data and configure the request
         let jsonString = "{\"password\":\"" + password + "\", \"state\":\"" + state + "\"}"
@@ -429,7 +432,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         request.setValue(authKey, forHTTPHeaderField: "Authorization")
         
         // send the request
-        NSURLConnection.sendAsynchronousRequest(request as URLRequest, queue: OperationQueue(), completionHandler:{ (response:URLResponse?, data: Data?, error: NSError?) -> Void in
+        let task = session.dataTask(with: request as URLRequest, completionHandler: {data, response, error -> Void in
             do {
                 if let jsonResult = try JSONSerialization.jsonObject(with: data!, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary {
                     // process jsonResult
@@ -460,9 +463,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 self.lockStateLabel.isEnabled = true
             }
             
-            
-        } as! (URLResponse?, Data?, Error?) -> Void)
+        })
         
+        task.resume()
     }
     
     ///////////// trigger functions /////////////
@@ -508,8 +511,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         setLocks("34", state: String(newState))
         print("New lock state: (\(newState))")
     }
-    
-    
     
     
 }
